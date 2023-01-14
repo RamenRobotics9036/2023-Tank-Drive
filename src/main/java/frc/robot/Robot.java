@@ -15,7 +15,7 @@ import com.revrobotics.CANSparkMaxLowLevel.MotorType;
  * This is a demo program showing the use of the DifferentialDrive class, specifically it contains
  * the code necessary to operate a robot with tank drive.
  */
-public class Robot extends TimedRobot {it
+public class Robot extends TimedRobot {
   private final MotorController m_leftMotor = new CANSparkMax(2, MotorType.kBrushless);
   private final MotorController m_rightMotor = new CANSparkMax(1, MotorType.kBrushless);
   private DifferentialDrive m_tankDrive;
