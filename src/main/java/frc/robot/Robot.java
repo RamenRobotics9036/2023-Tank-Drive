@@ -4,8 +4,8 @@
 
 package frc.robot;
 
-import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.TimedRobot;
+import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.drive.DifferentialDrive;
 import edu.wpi.first.wpilibj.motorcontrol.MotorController;
 import com.revrobotics.CANSparkMax;
@@ -19,19 +19,28 @@ public class Robot extends TimedRobot {
   private final MotorController m_leftMotor = new CANSparkMax(2, MotorType.kBrushless);
   private final MotorController m_rightMotor = new CANSparkMax(1, MotorType.kBrushless);
   private DifferentialDrive m_tankDrive;
+  private boolean arcadeDrive = true;
 
-  private Joystick m_leftStick;
-  private Joystick m_rightStick;
+  private XboxController m_controller;
 
   @Override
   public void robotInit() {
-    m_leftStick = new Joystick(0);
-    m_rightStick = new Joystick(0);
-    m_tankDrive = new DifferentialDrive(m_leftMotor, m_leftMotor);
+    m_controller = new XboxController(0);
+    m_rightMotor.setInverted(true);
+    m_tankDrive = new DifferentialDrive(m_leftMotor, m_rightMotor);
+    m_tankDrive.setMaxOutput(0.2);
   }
 
   @Override
   public void teleopPeriodic() {
-    m_tankDrive.tankDrive(m_leftStick.getY(), m_rightStick.getY());
+    if (m_controller.getAButtonReleased()) {
+      arcadeDrive = !arcadeDrive;
+      System.out.println("DRIVE MODE SWITCHED TO " + arcadeDrive);
+    }
+    if (arcadeDrive == true) {
+      m_tankDrive.arcadeDrive(-m_controller.getLeftY(), -m_controller.getLeftX());
+    } else if (arcadeDrive == false) {
+      m_tankDrive.tankDrive(-m_controller.getLeftY(), -m_controller.getRightY());
+    }
   }
 }
