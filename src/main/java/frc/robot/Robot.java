@@ -4,6 +4,9 @@
 
 package frc.robot;
 
+import edu.wpi.first.cameraserver.CameraServer;
+import edu.wpi.first.cscore.CvSink;
+import edu.wpi.first.cscore.CvSource;
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.drive.DifferentialDrive;
@@ -20,7 +23,6 @@ public class Robot extends TimedRobot {
   private final MotorController m_rightMotor = new CANSparkMax(1, MotorType.kBrushless);
   private DifferentialDrive m_tankDrive;
   private boolean arcadeDrive = true;
-
   private XboxController m_controller;
 
   @Override
@@ -30,6 +32,8 @@ public class Robot extends TimedRobot {
     m_leftMotor.setInverted(true);
     m_tankDrive = new DifferentialDrive(m_leftMotor, m_rightMotor);
     m_tankDrive.setMaxOutput(0.15);
+
+    CameraServer.startAutomaticCapture();
   }
 
   @Override
