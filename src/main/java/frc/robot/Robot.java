@@ -27,6 +27,7 @@ public class Robot extends TimedRobot {
   public void robotInit() {
     m_controller = new XboxController(0);
     m_rightMotor.setInverted(true);
+    m_leftMotor.setInverted(true);
     m_tankDrive = new DifferentialDrive(m_leftMotor, m_rightMotor);
     m_tankDrive.setMaxOutput(0.2);
   }
@@ -38,9 +39,9 @@ public class Robot extends TimedRobot {
       System.out.println("DRIVE MODE SWITCHED TO " + arcadeDrive);
     }
     if (arcadeDrive == true) {
-      m_tankDrive.arcadeDrive(-m_controller.getLeftY(), -m_controller.getLeftX());
+      m_tankDrive.arcadeDrive(-m_controller.getLeftX(), -m_controller.getLeftY());
     } else if (arcadeDrive == false) {
-      m_tankDrive.tankDrive(-m_controller.getLeftY(), -m_controller.getRightY());
+      m_tankDrive.tankDrive(m_controller.getLeftY(), -m_controller.getRightY());
     }
   }
 }
