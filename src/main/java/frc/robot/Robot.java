@@ -29,7 +29,7 @@ public class Robot extends TimedRobot {
     m_rightMotor.setInverted(true);
     m_leftMotor.setInverted(true);
     m_tankDrive = new DifferentialDrive(m_leftMotor, m_rightMotor);
-    m_tankDrive.setMaxOutput(0.2);
+    m_tankDrive.setMaxOutput(0.15);
   }
 
   @Override
@@ -39,9 +39,9 @@ public class Robot extends TimedRobot {
       System.out.println("DRIVE MODE SWITCHED TO " + arcadeDrive);
     }
     if (arcadeDrive == true) {
-      m_tankDrive.arcadeDrive(-m_controller.getLeftX(), -m_controller.getLeftY());
+      m_tankDrive.arcadeDrive(-m_controller.getLeftX(), -m_controller.getLeftY(), true);
     } else if (arcadeDrive == false) {
-      m_tankDrive.tankDrive(m_controller.getLeftY(), -m_controller.getRightY());
+      m_tankDrive.tankDrive(m_controller.getLeftY(), -m_controller.getRightY(), true);
     }
   }
 }
