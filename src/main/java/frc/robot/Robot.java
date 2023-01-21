@@ -5,6 +5,7 @@
 package frc.robot;
 
 import edu.wpi.first.cameraserver.CameraServer;
+import edu.wpi.first.wpilibj.Preferences;
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.drive.DifferentialDrive;
@@ -19,9 +20,15 @@ import com.revrobotics.CANSparkMaxLowLevel.MotorType;
 public class Robot extends TimedRobot {
   private final MotorController m_leftMotor = new CANSparkMax(2, MotorType.kBrushless);
   private final MotorController m_rightMotor = new CANSparkMax(1, MotorType.kBrushless);
+  private final MotorController m_armWinchMotor = new CANSparkMax(3, MotorType.kBrushed);
   private DifferentialDrive m_tankDrive;
   private boolean arcadeDrive = true;
   private XboxController m_controller;
+
+  // Controls the gain on the Arm Winch motor (0 to 1)
+  public static final String m_armWinchGainKey = "ArmWinchGain";
+  private static final double m_armWinchGainDefault = 0.1;
+  private static double m_armWinchGainValue = m_armWinchGainDefault;
 
   @Override
   public void robotInit() {
@@ -35,6 +42,25 @@ public class Robot extends TimedRobot {
   }
 
   @Override
+  public void teleopInit() {
+    initRobotPreferences();
+  }
+
+  private void initRobotPreferences()
+  {
+    // Init robot preferences if they don't already exist in flash memory
+    if (!Preferences.containsKey(m_armWinchGainKey)) {
+      Preferences.setDouble(m_armWinchGainKey, m_armWinchGainDefault);
+    }
+
+    m_armWinchGainValue = Preferences.getDouble(m_armWinchGainKey, m_armWinchGainDefault);
+    if (m_armWinchGainValue <0 || m_armWinchGainValue > 1)
+    {
+      m_armWinchGainValue = m_armWinchGainDefault;
+    }
+  }
+
+  @Override
   public void teleopPeriodic() {
     if (m_controller.getAButtonReleased()) {
       arcadeDrive = !arcadeDrive;
@@ -45,5 +71,24 @@ public class Robot extends TimedRobot {
     } else if (arcadeDrive == false) {
       m_tankDrive.tankDrive(m_controller.getLeftY(), -m_controller.getRightY(), true);
     }
+
+    // X-button turns motor on forward
+    if (m_controller.getXButtonReleased())
+    {
+      m_armWinchMotor.set(0);
+    }
+    else if (m_controller.getXButtonPressed()) {
+      m_armWinchMotor.set(m_armWinchGainValue);
+    }
+
+    // Y-button turns motor on backwards
+    if (m_controller.getYButtonReleased())
+    {
+      m_armWinchMotor.set(0);
+    }
+    else if (m_controller.getYButtonPressed()) {
+      m_armWinchMotor.set(-1 * m_armWinchGainValue);
+    }
+  
   }
 }
