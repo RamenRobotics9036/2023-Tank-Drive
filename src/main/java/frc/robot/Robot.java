@@ -19,6 +19,7 @@ import com.revrobotics.CANSparkMaxLowLevel.MotorType;
 public class Robot extends TimedRobot {
   private final MotorController m_leftMotor = new CANSparkMax(2, MotorType.kBrushless);
   private final MotorController m_rightMotor = new CANSparkMax(1, MotorType.kBrushless);
+  private final MotorController m_armWinchMotor = new CANSparkMax(3, MotorType.kBrushed);
   private DifferentialDrive m_tankDrive;
   private boolean arcadeDrive = true;
   private XboxController m_controller;
@@ -45,5 +46,24 @@ public class Robot extends TimedRobot {
     } else if (arcadeDrive == false) {
       m_tankDrive.tankDrive(m_controller.getLeftY(), -m_controller.getRightY(), true);
     }
+
+    // X-button turns motor on forward
+    if (m_controller.getXButtonReleased())
+    {
+      m_armWinchMotor.set(0);
+    }
+    else if (m_controller.getXButtonPressed()) {
+      m_armWinchMotor.set(0.1);
+    }
+
+    // Y-button turns motor on backwards
+    if (m_controller.getYButtonReleased())
+    {
+      m_armWinchMotor.set(0);
+    }
+    else if (m_controller.getYButtonPressed()) {
+      m_armWinchMotor.set(-0.1);
+    }
+  
   }
 }
