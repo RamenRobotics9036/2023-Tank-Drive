@@ -54,6 +54,10 @@ public class Robot extends TimedRobot {
     }
 
     m_armWinchGainValue = Preferences.getDouble(m_armWinchGainKey, m_armWinchGainDefault);
+    if (m_armWinchGainValue <0 || m_armWinchGainValue > 1)
+    {
+      m_armWinchGainValue = m_armWinchGainDefault;
+    }
   }
 
   @Override
@@ -74,7 +78,7 @@ public class Robot extends TimedRobot {
       m_armWinchMotor.set(0);
     }
     else if (m_controller.getXButtonPressed()) {
-      m_armWinchMotor.set(0.1);
+      m_armWinchMotor.set(m_armWinchGainValue);
     }
 
     // Y-button turns motor on backwards
@@ -83,7 +87,7 @@ public class Robot extends TimedRobot {
       m_armWinchMotor.set(0);
     }
     else if (m_controller.getYButtonPressed()) {
-      m_armWinchMotor.set(-0.1);
+      m_armWinchMotor.set(-1 * m_armWinchGainValue);
     }
   
   }
