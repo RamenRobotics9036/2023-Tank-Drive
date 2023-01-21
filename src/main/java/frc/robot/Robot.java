@@ -5,6 +5,7 @@
 package frc.robot;
 
 import edu.wpi.first.cameraserver.CameraServer;
+import edu.wpi.first.wpilibj.Preferences;
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.drive.DifferentialDrive;
@@ -24,6 +25,11 @@ public class Robot extends TimedRobot {
   private boolean arcadeDrive = true;
   private XboxController m_controller;
 
+  // Controls the gain on the Arm Winch motor (0 to 1)
+  public static final String m_armWinchGainKey = "ArmWinchGain";
+  private static final double m_armWinchGainDefault = 0.1;
+  private static double m_armWinchGainValue = m_armWinchGainDefault;
+
   @Override
   public void robotInit() {
     m_controller = new XboxController(0);
@@ -33,6 +39,21 @@ public class Robot extends TimedRobot {
     m_tankDrive.setMaxOutput(0.3);
 
     CameraServer.startAutomaticCapture();
+  }
+
+  @Override
+  public void teleopInit() {
+    initRobotPreferences();
+  }
+
+  private void initRobotPreferences()
+  {
+    // Init robot preferences if they don't already exist in flash memory
+    if (!Preferences.containsKey(m_armWinchGainKey)) {
+      Preferences.setDouble(m_armWinchGainKey, m_armWinchGainDefault);
+    }
+
+    m_armWinchGainValue = Preferences.getDouble(m_armWinchGainKey, m_armWinchGainDefault);
   }
 
   @Override
