@@ -78,11 +78,14 @@ public class Robot extends TimedRobot {
     // X-button turns motor on forward and Y button for reverse
     if (m_controller.getXButtonPressed()) {
       System.out.println("X BUTTON PRESSED");
+        // Update to talon
         m_armWinchMotor.set(m_armWinchGainValue);
       } else if (m_controller.getYButtonPressed()) {
         System.out.println("Y BUTTON PRESSED");
+        // Update to talon
         m_armWinchMotor.set(-1 * m_armWinchGainValue);
     } else {
+      // Update to talon
       m_armWinchMotor.set(0);
     }
   }
