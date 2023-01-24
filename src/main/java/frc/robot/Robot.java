@@ -7,9 +7,11 @@ package frc.robot;
 import edu.wpi.first.cameraserver.CameraServer;
 import edu.wpi.first.wpilibj.Preferences;
 import edu.wpi.first.wpilibj.TimedRobot;
+import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.drive.DifferentialDrive;
 import edu.wpi.first.wpilibj.motorcontrol.MotorController;
+
 import com.revrobotics.CANSparkMax;
 import com.revrobotics.CANSparkMaxLowLevel.MotorType;
 
@@ -54,7 +56,7 @@ public class Robot extends TimedRobot {
     }
 
     m_armWinchGainValue = Preferences.getDouble(m_armWinchGainKey, m_armWinchGainDefault);
-    if (m_armWinchGainValue <0 || m_armWinchGainValue > 1)
+    if (m_armWinchGainValue < 0 || m_armWinchGainValue > 1)
     {
       m_armWinchGainValue = m_armWinchGainDefault;
     }
@@ -67,28 +69,20 @@ public class Robot extends TimedRobot {
       System.out.println("DRIVE MODE SWITCHED TO " + arcadeDrive);
     }
     if (arcadeDrive == true) {
-      m_tankDrive.arcadeDrive(-m_controller.getLeftX(), -m_controller.getLeftY(), true);
+      m_tankDrive.arcadeDrive(-m_controller.getLeftY(), -m_controller.getLeftX(), true);
     } else if (arcadeDrive == false) {
       m_tankDrive.tankDrive(m_controller.getLeftY(), -m_controller.getRightY(), true);
     }
 
     // X-button turns motor on forward
-    if (m_controller.getXButtonReleased())
-    {
+    if (m_controller.getXButtonPressed()) {
+      System.out.println("X BUTTON PRESSED");
+        m_armWinchMotor.set(m_armWinchGainValue);
+      } else if (m_controller.getYButtonPressed()) {
+        System.out.println("Y BUTTON PRESSED");
+        m_armWinchMotor.set(-1 * m_armWinchGainValue);
+    } else {
       m_armWinchMotor.set(0);
     }
-    else if (m_controller.getXButtonPressed()) {
-      m_armWinchMotor.set(m_armWinchGainValue);
-    }
-
-    // Y-button turns motor on backwards
-    if (m_controller.getYButtonReleased())
-    {
-      m_armWinchMotor.set(0);
-    }
-    else if (m_controller.getYButtonPressed()) {
-      m_armWinchMotor.set(-1 * m_armWinchGainValue);
-    }
-  
   }
 }
