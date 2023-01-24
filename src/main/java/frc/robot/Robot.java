@@ -21,6 +21,7 @@ import com.revrobotics.CANSparkMaxLowLevel.MotorType;
 public class Robot extends TimedRobot {
   private final MotorController m_leftMotor = new CANSparkMax(10, MotorType.kBrushless);
   private final MotorController m_rightMotor = new CANSparkMax(12, MotorType.kBrushless);
+  // Change to Talon SRX
   private final MotorController m_armWinchMotor = new CANSparkMax(3, MotorType.kBrushed);
   private DifferentialDrive m_tankDrive;
   private boolean arcadeDrive = true;
