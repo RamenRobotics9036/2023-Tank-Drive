@@ -7,7 +7,6 @@ package frc.robot;
 import edu.wpi.first.cameraserver.CameraServer;
 import edu.wpi.first.wpilibj.Preferences;
 import edu.wpi.first.wpilibj.TimedRobot;
-import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.drive.DifferentialDrive;
 import edu.wpi.first.wpilibj.motorcontrol.MotorController;
@@ -20,8 +19,8 @@ import com.revrobotics.CANSparkMaxLowLevel.MotorType;
  * the code necessary to operate a robot with tank drive.
  */
 public class Robot extends TimedRobot {
-  private final MotorController m_leftMotor = new CANSparkMax(2, MotorType.kBrushless);
-  private final MotorController m_rightMotor = new CANSparkMax(1, MotorType.kBrushless);
+  private final MotorController m_leftMotor = new CANSparkMax(10, MotorType.kBrushless);
+  private final MotorController m_rightMotor = new CANSparkMax(12, MotorType.kBrushless);
   private final MotorController m_armWinchMotor = new CANSparkMax(3, MotorType.kBrushed);
   private DifferentialDrive m_tankDrive;
   private boolean arcadeDrive = true;
@@ -68,13 +67,14 @@ public class Robot extends TimedRobot {
       arcadeDrive = !arcadeDrive;
       System.out.println("DRIVE MODE SWITCHED TO " + arcadeDrive);
     }
+
     if (arcadeDrive == true) {
       m_tankDrive.arcadeDrive(-m_controller.getLeftY(), -m_controller.getLeftX(), true);
     } else if (arcadeDrive == false) {
       m_tankDrive.tankDrive(m_controller.getLeftY(), -m_controller.getRightY(), true);
     }
 
-    // X-button turns motor on forward
+    // X-button turns motor on forward and Y button for reverse
     if (m_controller.getXButtonPressed()) {
       System.out.println("X BUTTON PRESSED");
         m_armWinchMotor.set(m_armWinchGainValue);
