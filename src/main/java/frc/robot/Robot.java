@@ -31,7 +31,7 @@ public class Robot extends TimedRobot {
 
   // Controls the gain on the Arm Winch motor (0 to 1)
   public static final String m_armWinchGainKey = "ArmWinchGain";
-  private static final double m_armWinchGainDefault = 0.1;
+  private static final double m_armWinchGainDefault = 0.8;
   private static double m_armWinchGainValue = m_armWinchGainDefault;
 
   @Override
@@ -78,14 +78,14 @@ public class Robot extends TimedRobot {
     }
 
     // X-button turns motor on forward and Y button for reverse
-    if (m_controller.getXButtonPressed()) {
+    if (m_controller.getXButton()) {
       System.out.println("X BUTTON PRESSED");
-        // Update to talon
-        m_armWinchMotor.set(TalonSRXControlMode.PercentOutput, m_armWinchGainValue);
-      } else if (m_controller.getYButtonPressed()) {
+      // Update to talon
+      m_armWinchMotor.set(TalonSRXControlMode.PercentOutput, m_armWinchGainValue);
+    } else if (m_controller.getYButton()) {
         System.out.println("Y BUTTON PRESSED");
         // Update to talon
-        m_armWinchMotor.set(TalonSRXControlMode.PercentOutput, -1 * m_armWinchGainValue);
+        m_armWinchMotor.set(TalonSRXControlMode.PercentOutput, m_armWinchGainValue);
     } else {
       // Update to talon
       m_armWinchMotor.set(TalonSRXControlMode.PercentOutput, 0);
