@@ -23,14 +23,13 @@ import com.revrobotics.CANSparkMaxLowLevel.MotorType;
 public class Robot extends TimedRobot {
   private final MotorController m_leftMotor = new CANSparkMax(10, MotorType.kBrushless);
   private final MotorController m_rightMotor = new CANSparkMax(12, MotorType.kBrushless);
-  // Change to Talon SRX
   private final TalonSRX m_armWinchMotor = new TalonSRX(20);
   private DifferentialDrive m_tankDrive;
   private boolean arcadeDrive = true;
   private XboxController m_controller;
 
-  // Controls the gain on the Arm Winch motor (0 to 1)
   public static final String m_armWinchGainKey = "ArmWinchGain";
+  // Debug Arm Winch Value
   private static final double m_armWinchGainDefault = 0.8;
   private static double m_armWinchGainValue = m_armWinchGainDefault;
 
@@ -80,14 +79,11 @@ public class Robot extends TimedRobot {
     // X-button turns motor on forward and Y button for reverse
     if (m_controller.getXButton()) {
       System.out.println("X BUTTON PRESSED");
-      // Update to talon
-      m_armWinchMotor.set(TalonSRXControlMode.PercentOutput, m_armWinchGainValue);
+      m_armWinchMotor.set(TalonSRXControlMode.PercentOutput, 1);
     } else if (m_controller.getYButton()) {
         System.out.println("Y BUTTON PRESSED");
-        // Update to talon
-        m_armWinchMotor.set(TalonSRXControlMode.PercentOutput, m_armWinchGainValue);
+        m_armWinchMotor.set(TalonSRXControlMode.PercentOutput, -1);
     } else {
-      // Update to talon
       m_armWinchMotor.set(TalonSRXControlMode.PercentOutput, 0);
     }
   }
