@@ -11,6 +11,8 @@ import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.drive.DifferentialDrive;
 import edu.wpi.first.wpilibj.motorcontrol.MotorController;
 
+import com.ctre.phoenix.motorcontrol.TalonSRXControlMode;
+import com.ctre.phoenix.motorcontrol.can.TalonSRX;
 import com.revrobotics.CANSparkMax;
 import com.revrobotics.CANSparkMaxLowLevel.MotorType;
 
@@ -22,7 +24,7 @@ public class Robot extends TimedRobot {
   private final MotorController m_leftMotor = new CANSparkMax(10, MotorType.kBrushless);
   private final MotorController m_rightMotor = new CANSparkMax(12, MotorType.kBrushless);
   // Change to Talon SRX
-  private final MotorController m_armWinchMotor = new CANSparkMax(3, MotorType.kBrushed);
+  private final TalonSRX m_armWinchMotor = new TalonSRX(20);
   private DifferentialDrive m_tankDrive;
   private boolean arcadeDrive = true;
   private XboxController m_controller;
@@ -79,14 +81,14 @@ public class Robot extends TimedRobot {
     if (m_controller.getXButtonPressed()) {
       System.out.println("X BUTTON PRESSED");
         // Update to talon
-        m_armWinchMotor.set(m_armWinchGainValue);
+        m_armWinchMotor.set(TalonSRXControlMode.PercentOutput, m_armWinchGainValue);
       } else if (m_controller.getYButtonPressed()) {
         System.out.println("Y BUTTON PRESSED");
         // Update to talon
-        m_armWinchMotor.set(-1 * m_armWinchGainValue);
+        m_armWinchMotor.set(TalonSRXControlMode.PercentOutput, -1 * m_armWinchGainValue);
     } else {
       // Update to talon
-      m_armWinchMotor.set(0);
+      m_armWinchMotor.set(TalonSRXControlMode.PercentOutput, 0);
     }
   }
 }
