@@ -1,0 +1,10 @@
+[
+  {
+    "name": "/Preferences/ArmWinchGain",
+    "type": "double",
+    "value": 0.8,
+    "properties": {
+      "persistent": true
+    }
+  }
+]

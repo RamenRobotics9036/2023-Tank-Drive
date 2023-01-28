@@ -81,10 +81,10 @@ public class Robot extends TimedRobot {
     m_tankDrive.tankDrive(m_controller.getLeftY(), -m_controller.getRightY(), true);
 
     // Right Trigger turns motor on forward and Left Trigger for reverse
-    if (m_controller.getRightTriggerAxis() > 0) {
+    if (m_controller.getRightTriggerAxis() > 0.1) {
       m_armWinchMotor.set(TalonSRXControlMode.PercentOutput, m_controller.getRightTriggerAxis());
       System.out.println("RIGHT TRIGGER PRESSED | OUTPUT SET TO " + m_armWinchMotor.getMotorOutputPercent());
-    } else if (m_controller.getLeftTriggerAxis() > 0) {
+    } else if (m_controller.getLeftTriggerAxis() > 0.1) {
         m_armWinchMotor.set(TalonSRXControlMode.PercentOutput, m_controller.getLeftTriggerAxis());
         System.out.println("LEFT TRIGGER PRESSED | OUTPUT SET TO " + m_armWinchMotor.getMotorOutputPercent());
     } else {
