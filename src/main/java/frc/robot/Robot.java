@@ -5,6 +5,9 @@
 package frc.robot;
 
 import edu.wpi.first.cameraserver.CameraServer;
+import edu.wpi.first.wpilibj.Compressor;
+import edu.wpi.first.wpilibj.DoubleSolenoid;
+import edu.wpi.first.wpilibj.PneumaticsModuleType;
 import edu.wpi.first.wpilibj.Preferences;
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.XboxController;
@@ -24,6 +27,8 @@ public class Robot extends TimedRobot {
   private final MotorController m_leftMotor = new CANSparkMax(10, MotorType.kBrushless);
   private final MotorController m_rightMotor = new CANSparkMax(12, MotorType.kBrushless);
   private final TalonSRX m_armWinchMotor = new TalonSRX(20);
+  private final Compressor m_compressor = new Compressor(PneumaticsModuleType.REVPH);
+  private final DoubleSolenoid m_solenoid = new DoubleSolenoid(PneumaticsModuleType.REVPH, 0, 1);
   private DifferentialDrive m_tankDrive;
   private boolean arcadeDrive = true;
   private XboxController m_controller;
