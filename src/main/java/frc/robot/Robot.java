@@ -37,9 +37,9 @@ public class Robot extends TimedRobot {
   private DifferentialDrive m_tankDrive;
   private XboxController m_controller;
 
-  public static final String m_armWinchGainKey = "ArmWinchGain";
-  private static final double m_armWinchGainDefault = 0.8;
-  private static double m_armWinchGainValue = m_armWinchGainDefault;
+  public static final String m_exampleKey = "m_exampleKey";
+  private static final double m_exampleDefaultValue = 0.5;
+  private static double m_exampleValue = m_exampleDefaultValue;
 
   @Override
   public void robotInit() {
@@ -67,14 +67,14 @@ public class Robot extends TimedRobot {
 
   private void initRobotPreferences() {
     // Init robot preferences if they don't already exist in flash memory
-    if (!Preferences.containsKey(m_armWinchGainKey)) {
-      Preferences.setDouble(m_armWinchGainKey, m_armWinchGainDefault);
+    if (!Preferences.containsKey(m_exampleKey)) {
+      Preferences.setDouble(m_exampleKey, m_exampleDefaultValue);
     }
 
-    m_armWinchGainValue = Preferences.getDouble(m_armWinchGainKey, m_armWinchGainDefault);
-    if (m_armWinchGainValue < 0 || m_armWinchGainValue > 1)
+    m_exampleValue = Preferences.getDouble(m_exampleKey, m_exampleDefaultValue);
+    if (m_exampleValue < 0 || m_exampleValue > 1)
     {
-      m_armWinchGainValue = m_armWinchGainDefault;
+      m_exampleValue = m_exampleDefaultValue;
     }
   }
 
