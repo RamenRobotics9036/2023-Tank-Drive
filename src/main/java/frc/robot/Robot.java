@@ -28,8 +28,9 @@ public class Robot extends TimedRobot {
   private final TalonSRX m_armWinchMotor = new TalonSRX(20);
 
   private final Compressor m_compressor = new Compressor(PneumaticsModuleType.REVPH);
-  private DoubleSolenoid m_solenoid;
-  private PneumaticHub m_PHub;
+  private DoubleSolenoid m_leftArmSolenoid;
+  private DoubleSolenoid m_rightArmSolenoid;
+  private PneumaticHub m_pneumaticHub;
 
   private final MotorController m_leftMotor = new CANSparkMax(10, MotorType.kBrushless);
   private final MotorController m_rightMotor = new CANSparkMax(12, MotorType.kBrushless);
@@ -44,13 +45,14 @@ public class Robot extends TimedRobot {
   public void robotInit() {
     m_controller = new XboxController(0);
 
-    m_PHub = new PneumaticHub();
+    m_pneumaticHub = new PneumaticHub();
 
     m_compressor.enableDigital();
-    m_solenoid = m_PHub.makeDoubleSolenoid(0, 1);
+    m_leftArmSolenoid = m_pneumaticHub.makeDoubleSolenoid(0, 1);
+    // m_rightArmSolenoid = m_pneumaticHub.makeDoubleSolenoid(2, 3);
 
-    m_rightMotor.setInverted(true);
-    m_leftMotor.setInverted(true);
+    // This isn't working
+    // m_leftMotor.setInverted(true);
     m_tankDrive = new DifferentialDrive(m_leftMotor, m_rightMotor);
     m_tankDrive.setMaxOutput(0.1);
 
@@ -82,10 +84,10 @@ public class Robot extends TimedRobot {
 
     // Right Trigger turns motor on forward and Left Trigger for reverse
     if (m_controller.getRightTriggerAxis() > 0.1) {
-      m_armWinchMotor.set(TalonSRXControlMode.PercentOutput, m_controller.getRightTriggerAxis());
+      m_armWinchMotor.set(TalonSRXControlMode.PercentOutput, Math.pow(m_controller.getRightTriggerAxis(), 2));
       System.out.println("RIGHT TRIGGER PRESSED | OUTPUT SET TO " + m_armWinchMotor.getMotorOutputPercent());
     } else if (m_controller.getLeftTriggerAxis() > 0.1) {
-        m_armWinchMotor.set(TalonSRXControlMode.PercentOutput, m_controller.getLeftTriggerAxis());
+        m_armWinchMotor.set(TalonSRXControlMode.PercentOutput, -Math.pow(m_controller.getLeftTriggerAxis(), 2));
         System.out.println("LEFT TRIGGER PRESSED | OUTPUT SET TO " + m_armWinchMotor.getMotorOutputPercent());
     } else {
       m_armWinchMotor.set(TalonSRXControlMode.PercentOutput, 0);
@@ -93,13 +95,18 @@ public class Robot extends TimedRobot {
 
     // Left Bumper sets solenoid to forward and Left Bumper sets solenoid to reverse
     if (m_controller.getRightBumperPressed()){
-      m_solenoid.set(DoubleSolenoid.Value.kForward);
-      System.out.println("RIGHT BUMPER PRESSED | OUTPUT SET TO " + m_solenoid.get());
+      m_leftArmSolenoid.set(DoubleSolenoid.Value.kForward);
+      // m_rightArmSolenoid.set(DoubleSolenoid.Value.kForward);
+      System.out.println("LEFT BUMPER PRESSED | LEFT SOLENOID OUTPUT SET TO " + m_leftArmSolenoid.get());
+      // System.out.println("LEFT BUMPER PRESSED | RIGHT SOLENOID OUTPUT SET TO " + m_rightArmSolenoid.get());
     } else if (m_controller.getLeftBumperPressed()){
-        m_solenoid.set(DoubleSolenoid.Value.kReverse);
-        System.out.println("LEFT BUMPER PRESSED | OUTPUT SET TO " + m_solenoid.get());
+        m_leftArmSolenoid.set(DoubleSolenoid.Value.kReverse);
+        // m_rightArmSolenoid.set(DoubleSolenoid.Value.kReverse);
+        System.out.println("LEFT BUMPER PRESSED | LEFT SOLENOID OUTPUT SET TO " + m_leftArmSolenoid.get());
+        // System.out.println("LEFT BUMPER PRESSED | RIGHT SOLENOID OUTPUT SET TO " + m_rightArmSolenoid.get());
     } else {
-        // m_solenoid.set(DoubleSolenoid.Value.kOff);
+        // m_leftArmSolenoid.set(DoubleSolenoid.Value.kOff);
+        // m_rightArmSolenoid.set(DoubleSolenoid.Value.kOff);
     }
   }
 }
