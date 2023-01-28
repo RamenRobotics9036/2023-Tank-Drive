@@ -18,6 +18,7 @@ import edu.wpi.first.wpilibj.motorcontrol.MotorController;
 import com.ctre.phoenix.motorcontrol.TalonSRXControlMode;
 import com.ctre.phoenix.motorcontrol.can.TalonSRX;
 import com.revrobotics.CANSparkMax;
+import com.revrobotics.RelativeEncoder;
 import com.revrobotics.CANSparkMaxLowLevel.MotorType;
 
 /**
@@ -29,13 +30,16 @@ public class Robot extends TimedRobot {
 
   private final Compressor m_compressor = new Compressor(PneumaticsModuleType.REVPH);
   private DoubleSolenoid m_leftArmSolenoid;
-  private DoubleSolenoid m_rightArmSolenoid;
+  // private DoubleSolenoid m_rightArmSolenoid;
   private PneumaticHub m_pneumaticHub;
 
-  private final MotorController m_leftMotor = new CANSparkMax(10, MotorType.kBrushless);
-  private final MotorController m_rightMotor = new CANSparkMax(12, MotorType.kBrushless);
+  private final CANSparkMax m_leftMotor = new CANSparkMax(10, MotorType.kBrushless);
+  private final CANSparkMax m_rightMotor = new CANSparkMax(12, MotorType.kBrushless);
   private DifferentialDrive m_tankDrive;
   private XboxController m_controller;
+
+  private RelativeEncoder m_leftMotorEncoder;
+  private RelativeEncoder m_rightMotorEncoder;
 
   public static final String m_exampleKey = "m_exampleKey";
   private static final double m_exampleDefaultValue = 0.5;
@@ -56,11 +60,16 @@ public class Robot extends TimedRobot {
     m_tankDrive = new DifferentialDrive(m_leftMotor, m_rightMotor);
     m_tankDrive.setMaxOutput(0.1);
 
+    m_rightMotorEncoder = m_leftMotor.getEncoder();
+    m_leftMotorEncoder = m_rightMotor.getEncoder();
+
     CameraServer.startAutomaticCapture();
   }
 
   @Override
   public void teleopInit() {
+    m_rightMotorEncoder.setPosition(0);
+    m_leftMotorEncoder.setPosition(0);
     // Settings are reloaded each time robot switches back to teleop mode
     initRobotPreferences();
   }
@@ -80,13 +89,13 @@ public class Robot extends TimedRobot {
 
   @Override
   public void teleopPeriodic() {
-    m_tankDrive.tankDrive(m_controller.getLeftY(), -m_controller.getRightY(), true);
+    m_tankDrive.tankDrive(-m_controller.getLeftY(), m_controller.getRightY(), true);
 
     // Right Trigger turns motor on forward and Left Trigger for reverse
-    if (m_controller.getRightTriggerAxis() > 0.1) {
+    if (m_controller.getRightTriggerAxis() > 0) {
       m_armWinchMotor.set(TalonSRXControlMode.PercentOutput, Math.pow(m_controller.getRightTriggerAxis(), 2));
       System.out.println("RIGHT TRIGGER PRESSED | OUTPUT SET TO " + m_armWinchMotor.getMotorOutputPercent());
-    } else if (m_controller.getLeftTriggerAxis() > 0.1) {
+    } else if (m_controller.getLeftTriggerAxis() > 0) {
         m_armWinchMotor.set(TalonSRXControlMode.PercentOutput, -Math.pow(m_controller.getLeftTriggerAxis(), 2));
         System.out.println("LEFT TRIGGER PRESSED | OUTPUT SET TO " + m_armWinchMotor.getMotorOutputPercent());
     } else {
@@ -108,5 +117,12 @@ public class Robot extends TimedRobot {
         // m_leftArmSolenoid.set(DoubleSolenoid.Value.kOff);
         // m_rightArmSolenoid.set(DoubleSolenoid.Value.kOff);
     }
+  }
+
+  @Override
+  public void disabledInit() {
+    System.out.println("ROBOT DISABLED");
+    System.out.println("LEFT MOTOR POSITION AT" + m_leftMotorEncoder.getPosition());
+    System.out.println("RIGHT MOTOR POSITION AT" + m_rightMotorEncoder.getPosition());
   }
 }
