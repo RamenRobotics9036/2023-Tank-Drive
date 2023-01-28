@@ -92,5 +92,13 @@ public class Robot extends TimedRobot {
       m_armWinchMotor.set(TalonSRXControlMode.PercentOutput, 0);
     }
     // Comment
+    //activate solenoid
+    if (m_controller.getRightBumperReleased()){
+      m_solenoid.set(DoubleSolenoid.Value.kForward);
+    }
+    //deactivate solenoid
+    if (m_controller.getLeftBumperReleased()){
+      m_solenoid.set(DoubleSolenoid.Value.kReverse);
+    }
   }
 }
