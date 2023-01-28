@@ -38,8 +38,10 @@ public class Robot extends TimedRobot {
   @Override
   public void robotInit() {
     initRobotPreferences();
-    m_compressor.enableDigital();
     m_controller = new XboxController(0);
+
+    m_compressor.enableDigital();
+    m_solenoid = PHub.makeDoubleSolenoid(0, 1);
 
     m_rightMotor.setInverted(true);
     m_leftMotor.setInverted(true);
@@ -51,8 +53,6 @@ public class Robot extends TimedRobot {
 
   @Override
   public void teleopInit() {
-    initRobotPreferences();
-    m_solenoid = PHub.makeDoubleSolenoid(0, 1);
   }
 
   private void initRobotPreferences() {
