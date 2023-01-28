@@ -7,12 +7,16 @@ package frc.robot;
 import edu.wpi.first.cameraserver.CameraServer;
 import edu.wpi.first.wpilibj.Compressor;
 import edu.wpi.first.wpilibj.DoubleSolenoid;
+import edu.wpi.first.wpilibj.PneumaticHub;
+// import edu.wpi.first.wpilibj.Compressor;
+// import edu.wpi.first.wpilibj.DoubleSolenoid;
 import edu.wpi.first.wpilibj.PneumaticsModuleType;
 import edu.wpi.first.wpilibj.Preferences;
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.drive.DifferentialDrive;
 import edu.wpi.first.wpilibj.motorcontrol.MotorController;
+// import edu.wpi.first.wpilibj.PneumaticHub;
 
 import com.ctre.phoenix.motorcontrol.TalonSRXControlMode;
 import com.ctre.phoenix.motorcontrol.can.TalonSRX;
@@ -28,10 +32,12 @@ public class Robot extends TimedRobot {
   private final MotorController m_rightMotor = new CANSparkMax(12, MotorType.kBrushless);
   private final TalonSRX m_armWinchMotor = new TalonSRX(20);
   private final Compressor m_compressor = new Compressor(PneumaticsModuleType.REVPH);
-  private final DoubleSolenoid m_solenoid = new DoubleSolenoid(PneumaticsModuleType.REVPH, 0, 1);
+  private DoubleSolenoid m_solenoid;
   private DifferentialDrive m_tankDrive;
   private boolean arcadeDrive = true;
   private XboxController m_controller;
+  private PneumaticHub PHub = new PneumaticHub();
+  
 
   public static final String m_armWinchGainKey = "ArmWinchGain";
   // Debug Arm Winch Value
@@ -44,7 +50,8 @@ public class Robot extends TimedRobot {
     m_rightMotor.setInverted(true);
     m_leftMotor.setInverted(true);
     m_tankDrive = new DifferentialDrive(m_leftMotor, m_rightMotor);
-    m_tankDrive.setMaxOutput(0.3);
+    m_tankDrive.setMaxOutput(0.1);
+    m_compressor.enableDigital();
 
     CameraServer.startAutomaticCapture();
   }
@@ -52,6 +59,7 @@ public class Robot extends TimedRobot {
   @Override
   public void teleopInit() {
     initRobotPreferences();
+    m_solenoid = PHub.makeDoubleSolenoid(0, 1);
   }
 
   private void initRobotPreferences()
@@ -93,14 +101,18 @@ public class Robot extends TimedRobot {
     }
     // Comment
 
-    if (m_controller.getRightBumper()){
-      // activate solenoid
+    if (m_controller.getRightBumperPressed()){
+      // Activate Solenoid
+      System.out.println("Right bumper pressed");
+      System.out.println("Solenoid Channels :" + m_solenoid.get());
       m_solenoid.set(DoubleSolenoid.Value.kForward);
-    } else if (m_controller.getLeftBumper()){
-      // deactivate solenoid
-      m_solenoid.set(DoubleSolenoid.Value.kReverse);
+    } else if (m_controller.getLeftBumperPressed()){
+        // Deactivate Solenoid
+        m_solenoid.toggle();
+        System.out.println("Left bumper pressed");
+        System.out.println("Solenoid Channels :" + m_solenoid.get());
     } else {
-      m_solenoid.set(DoubleSolenoid.Value.kOff);
+        //m_solenoid.set(DoubleSolenoid.Value.kOff);
     }
   }
 }
