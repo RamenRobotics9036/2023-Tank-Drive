@@ -4,6 +4,12 @@
 
 package frc.robot;
 
+import com.ctre.phoenix.motorcontrol.TalonSRXControlMode;
+import com.ctre.phoenix.motorcontrol.can.TalonSRX;
+import com.revrobotics.CANSparkMax;
+import com.revrobotics.CANSparkMaxLowLevel.MotorType;
+import com.revrobotics.RelativeEncoder;
+
 import edu.wpi.first.cameraserver.CameraServer;
 import edu.wpi.first.wpilibj.Compressor;
 import edu.wpi.first.wpilibj.DoubleSolenoid;
@@ -13,13 +19,6 @@ import edu.wpi.first.wpilibj.Preferences;
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.drive.DifferentialDrive;
-import edu.wpi.first.wpilibj.motorcontrol.MotorController;
-
-import com.ctre.phoenix.motorcontrol.TalonSRXControlMode;
-import com.ctre.phoenix.motorcontrol.can.TalonSRX;
-import com.revrobotics.CANSparkMax;
-import com.revrobotics.RelativeEncoder;
-import com.revrobotics.CANSparkMaxLowLevel.MotorType;
 
 /**
  * This is a demo program showing the use of the DifferentialDrive class, specifically it contains
@@ -55,8 +54,7 @@ public class Robot extends TimedRobot {
     m_leftArmSolenoid = m_pneumaticHub.makeDoubleSolenoid(0, 1);
     // m_rightArmSolenoid = m_pneumaticHub.makeDoubleSolenoid(2, 3);
 
-    // This isn't working
-    // m_leftMotor.setInverted(true);
+    m_rightMotor.setInverted(true);
     m_tankDrive = new DifferentialDrive(m_leftMotor, m_rightMotor);
     m_tankDrive.setMaxOutput(0.1);
 
@@ -89,7 +87,7 @@ public class Robot extends TimedRobot {
 
   @Override
   public void teleopPeriodic() {
-    m_tankDrive.tankDrive(-m_controller.getLeftY(), m_controller.getRightY(), true);
+    m_tankDrive.tankDrive(-m_controller.getLeftY(), -m_controller.getRightY(), true);
 
     // Right Trigger turns motor on forward and Left Trigger for reverse
     if (m_controller.getRightTriggerAxis() > 0) {
