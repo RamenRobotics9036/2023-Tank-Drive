@@ -9,6 +9,7 @@ import edu.wpi.first.wpilibj.Compressor;
 import edu.wpi.first.wpilibj.DoubleSolenoid;
 import edu.wpi.first.wpilibj.PneumaticHub;
 import edu.wpi.first.wpilibj.PneumaticsModuleType;
+import edu.wpi.first.wpilibj.Preferences;
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.drive.DifferentialDrive;
@@ -27,21 +28,26 @@ public class Robot extends TimedRobot {
   private final TalonSRX m_armWinchMotor = new TalonSRX(20);
 
   private final Compressor m_compressor = new Compressor(PneumaticsModuleType.REVPH);
-  private PneumaticHub PHub = new PneumaticHub();
   private DoubleSolenoid m_solenoid;
+  private PneumaticHub m_PHub;
 
   private final MotorController m_leftMotor = new CANSparkMax(10, MotorType.kBrushless);
   private final MotorController m_rightMotor = new CANSparkMax(12, MotorType.kBrushless);
   private DifferentialDrive m_tankDrive;
   private XboxController m_controller;
 
+  public static final String m_armWinchGainKey = "ArmWinchGain";
+  private static final double m_armWinchGainDefault = 0.8;
+  private static double m_armWinchGainValue = m_armWinchGainDefault;
+
   @Override
   public void robotInit() {
-    initRobotPreferences();
     m_controller = new XboxController(0);
 
+    m_PHub = new PneumaticHub();
+
     m_compressor.enableDigital();
-    m_solenoid = PHub.makeDoubleSolenoid(0, 1);
+    m_solenoid = m_PHub.makeDoubleSolenoid(0, 1);
 
     m_rightMotor.setInverted(true);
     m_leftMotor.setInverted(true);
@@ -53,9 +59,21 @@ public class Robot extends TimedRobot {
 
   @Override
   public void teleopInit() {
+    // Settings are reloaded each time robot switches back to teleop mode
+    initRobotPreferences();
   }
 
   private void initRobotPreferences() {
+    // Init robot preferences if they don't already exist in flash memory
+    if (!Preferences.containsKey(m_armWinchGainKey)) {
+      Preferences.setDouble(m_armWinchGainKey, m_armWinchGainDefault);
+    }
+
+    m_armWinchGainValue = Preferences.getDouble(m_armWinchGainKey, m_armWinchGainDefault);
+    if (m_armWinchGainValue < 0 || m_armWinchGainValue > 1)
+    {
+      m_armWinchGainValue = m_armWinchGainDefault;
+    }
   }
 
   @Override
