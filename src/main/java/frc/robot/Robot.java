@@ -19,6 +19,7 @@ import edu.wpi.first.wpilibj.Preferences;
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.drive.DifferentialDrive;
+import edu.wpi.first.wpilibj.motorcontrol.MotorControllerGroup;
 
 /**
  * This is a demo program showing the use of the DifferentialDrive class, specifically it contains
@@ -32,8 +33,12 @@ public class Robot extends TimedRobot {
   // private DoubleSolenoid m_rightArmSolenoid;
   private PneumaticHub m_pneumaticHub;
 
-  private final CANSparkMax m_leftMotor = new CANSparkMax(10, MotorType.kBrushless);
-  private final CANSparkMax m_rightMotor = new CANSparkMax(12, MotorType.kBrushless);
+  private final CANSparkMax m_leftMotor1 = new CANSparkMax(10, MotorType.kBrushless);
+  private final CANSparkMax m_leftMotor2 = new CANSparkMax(11, MotorType.kBrushless);
+  private final CANSparkMax m_rightMotor1 = new CANSparkMax(12, MotorType.kBrushless);
+  private final CANSparkMax m_rightMotor2 = new CANSparkMax(13, MotorType.kBrushless);
+  private final MotorControllerGroup m_leftMotor = new MotorControllerGroup(m_leftMotor1, m_leftMotor2);
+  private final MotorControllerGroup m_rightMotor = new MotorControllerGroup(m_rightMotor1, m_rightMotor2);
   private DifferentialDrive m_tankDrive;
   private XboxController m_controller;
 
@@ -58,8 +63,8 @@ public class Robot extends TimedRobot {
     m_tankDrive = new DifferentialDrive(m_leftMotor, m_rightMotor);
     m_tankDrive.setMaxOutput(0.1);
 
-    m_rightMotorEncoder = m_leftMotor.getEncoder();
-    m_leftMotorEncoder = m_rightMotor.getEncoder();
+    m_rightMotorEncoder = m_leftMotor1.getEncoder();
+    m_leftMotorEncoder = m_rightMotor1.getEncoder();
 
     CameraServer.startAutomaticCapture();
   }
@@ -115,6 +120,11 @@ public class Robot extends TimedRobot {
         // m_leftArmSolenoid.set(DoubleSolenoid.Value.kOff);
         // m_rightArmSolenoid.set(DoubleSolenoid.Value.kOff);
     }
+
+    /*
+     * Make code for talon sparkmax to move arm forward and back v 
+     * 
+     */
   }
 
   @Override
