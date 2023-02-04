@@ -4,11 +4,15 @@
 
 package frc.robot;
 
+import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.TalonSRXControlMode;
+import com.ctre.phoenix.motorcontrol.VictorSPXControlMode;
 import com.ctre.phoenix.motorcontrol.can.TalonSRX;
+import com.ctre.phoenix.motorcontrol.can.VictorSPX;
 import com.revrobotics.CANSparkMax;
 import com.revrobotics.CANSparkMaxLowLevel.MotorType;
 import com.revrobotics.RelativeEncoder;
+import com.revrobotics.CANSparkMax.IdleMode;
 
 import edu.wpi.first.cameraserver.CameraServer;
 import edu.wpi.first.wpilibj.Compressor;
@@ -27,10 +31,11 @@ import edu.wpi.first.wpilibj.motorcontrol.MotorControllerGroup;
  */
 public class Robot extends TimedRobot {
   private final TalonSRX m_armWinchMotor = new TalonSRX(20);
+  private final VictorSPX m_armExtensionMotor = new VictorSPX(19);
 
   private final Compressor m_compressor = new Compressor(PneumaticsModuleType.REVPH);
   private DoubleSolenoid m_leftArmSolenoid;
-  // private DoubleSolenoid m_rightArmSolenoid;
+  // private DoubleSolenoid m_rightArmSolenoid;\
   private PneumaticHub m_pneumaticHub;
 
   private final CANSparkMax m_leftMotor1 = new CANSparkMax(10, MotorType.kBrushless);
@@ -51,7 +56,13 @@ public class Robot extends TimedRobot {
 
   @Override
   public void robotInit() {
+    m_leftMotor1.setIdleMode(IdleMode.kBrake);
+    m_leftMotor2.setIdleMode(IdleMode.kBrake);
+    m_rightMotor1.setIdleMode(IdleMode.kBrake);
+    m_leftMotor2.setIdleMode(IdleMode.kBrake);
+
     m_controller = new XboxController(0);
+    m_rightMotor.setInverted(true);
 
     m_pneumaticHub = new PneumaticHub();
 
@@ -59,9 +70,8 @@ public class Robot extends TimedRobot {
     m_leftArmSolenoid = m_pneumaticHub.makeDoubleSolenoid(0, 1);
     // m_rightArmSolenoid = m_pneumaticHub.makeDoubleSolenoid(2, 3);
 
-    m_rightMotor.setInverted(true);
     m_tankDrive = new DifferentialDrive(m_leftMotor, m_rightMotor);
-    m_tankDrive.setMaxOutput(0.1);
+    m_tankDrive.setMaxOutput(0.15);
 
     m_rightMotorEncoder = m_leftMotor1.getEncoder();
     m_leftMotorEncoder = m_rightMotor1.getEncoder();
@@ -121,10 +131,15 @@ public class Robot extends TimedRobot {
         // m_rightArmSolenoid.set(DoubleSolenoid.Value.kOff);
     }
 
-    /*
-     * Make code for talon sparkmax to move arm forward and back v 
-     * 
-     */
+    if (m_controller.getAButton()) {
+      m_armExtensionMotor.set(VictorSPXControlMode.PercentOutput, 0.8);
+      System.out.println("A BUTTON PRESSED | OUTPUT SET TO " + m_armExtensionMotor.getMotorOutputPercent());
+    } else if (m_controller.getYButton()) {
+        m_armExtensionMotor.set(VictorSPXControlMode.PercentOutput, -0.8);
+        System.out.println("Y BUTTON PRESSED | OUTPUT SET TO " + m_armExtensionMotor.getMotorOutputPercent());
+    } else {
+      m_armExtensionMotor.set(VictorSPXControlMode.PercentOutput, 0);
+    }
   }
 
   @Override
