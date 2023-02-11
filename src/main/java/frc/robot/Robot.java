@@ -11,7 +11,10 @@ import com.ctre.phoenix.motorcontrol.can.VictorSPX;
 import com.revrobotics.CANSparkMax;
 import com.revrobotics.CANSparkMaxLowLevel.MotorType;
 
+import Auto.RotateLeftMotor;
+import Auto.RotateRightMotor;
 import Auto.RotateWheelRotations;
+import Auto.TurnInPlace;
 
 import com.revrobotics.RelativeEncoder;
 import com.revrobotics.CANSparkMax.IdleMode;
@@ -60,7 +63,10 @@ public class Robot extends TimedRobot {
   private static final double m_exampleDefaultValue = 0.5;
   private static double m_exampleValue = m_exampleDefaultValue;
 
-  private RotateWheelRotations autoCommand;
+  private RotateWheelRotations autoCommandRotate;
+  private RotateRightMotor autoCommandRight;
+  private RotateLeftMotor autoCommandLeft;
+  private TurnInPlace autoCommandTurnInPlace;
 
 
   @Override
@@ -166,15 +172,14 @@ public class Robot extends TimedRobot {
 
   @Override
   public void autonomousInit() {
-    autoCommand = new RotateWheelRotations(m_tankDrive, m_rightMotorEncoder, m_leftMotorEncoder, 10, 0.4);
-    System.out.println("AUTO COMMAND INITIATED IN ROBOT CLASS");
+    autoCommandTurnInPlace = new TurnInPlace(true, m_tankDrive, m_rightMotorEncoder, m_leftMotorEncoder, 5, 0.4);
+    System.out.println("AUTO COMMAND SCHEDULED");
   }
 
   @Override
   public void autonomousPeriodic() {
-    if (!autoCommand.isFinished()) {
-      autoCommand.execute();
-      System.out.println("AUTO COMMAND SCHEDULED IN ROBOT CLASS");
+    if (!autoCommandTurnInPlace.isFinished()) {
+      autoCommandTurnInPlace.execute();
     }
   }
 }

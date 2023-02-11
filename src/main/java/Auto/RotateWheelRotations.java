@@ -6,9 +6,9 @@ import edu.wpi.first.wpilibj.drive.DifferentialDrive;
 
 public class RotateWheelRotations {
     private double gearBoxRatio = 8.28;
-    private double wheelDiameter = 6;
-    private double wheelCircumfrence = wheelDiameter * Math.PI;
-    private double wheelRotationToInches = wheelCircumfrence / gearBoxRatio;
+    // private double wheelDiameter = 6;
+    // private double wheelCircumfrence = wheelDiameter * Math.PI;
+    // private double wheelRotationToInches = wheelCircumfrence / gearBoxRatio;
     private double percentOutput;
 
     private DifferentialDrive m_drive;
@@ -28,8 +28,8 @@ public class RotateWheelRotations {
 
     public void execute() {
         m_drive.tankDrive(percentOutput, percentOutput);
-        System.out.println("AUTO COMMAND SCHEDULED IN AUTO CLASS | OUTPUT SET TO: " + percentOutput);
-        System.out.println("RIGHT ENCODER POSITION AT " + Math.abs(m_mainEncoder.getPosition()));
+        // System.out.println("AUTO COMMAND SCHEDULED IN AUTO CLASS | OUTPUT SET TO: " + percentOutput);
+        System.out.println("ENCODER POSITION AT " + Math.abs(m_mainEncoder.getPosition()));
     }
 
     public boolean isFinished() {
@@ -37,7 +37,7 @@ public class RotateWheelRotations {
                 isFinished = true;
         }
         if (!isFinished) {
-            System.out.println("AUTO COMMAND CHECKED IN AUTO CLASS | IS FINISHED:" + (isFinished));
+            // System.out.println("AUTO COMMAND CHECKED IN ROTATEWHEELCLASS | IS FINISHED:" + (isFinished));
         }
         return isFinished;
     }
