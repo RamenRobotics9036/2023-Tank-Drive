@@ -139,11 +139,11 @@ public class Drivetrain {
     xSpeed = MathUtil.applyDeadband(xSpeed, m_deadband);
     zRotation = MathUtil.applyDeadband(zRotation, m_deadband);
 
-	// Convert these [-1,1] values to drivetrain speeds, and apply maxOutput
-	var xDrivetrainSpeed = xSpeed * Drivetrain.kMaxSpeed * m_maxOutput;
-	var zDrivetrainRotation = zRotation * Drivetrain.kMaxAngularSpeed * m_maxOutput;
+    // Convert these [-1,1] values to drivetrain speeds, and apply maxOutput
+    var xDrivetrainSpeed = xSpeed * Drivetrain.kMaxSpeed * m_maxOutput;
+    var zDrivetrainRotation = zRotation * Drivetrain.kMaxAngularSpeed * m_maxOutput;
 
-	drive(xDrivetrainSpeed, zDrivetrainRotation);
+    drive(xDrivetrainSpeed, zDrivetrainRotation);
   }
 
   /** Update robot odometry. */

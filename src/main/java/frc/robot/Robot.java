@@ -8,10 +8,7 @@ import com.ctre.phoenix.motorcontrol.TalonSRXControlMode;
 import com.ctre.phoenix.motorcontrol.VictorSPXControlMode;
 import com.ctre.phoenix.motorcontrol.can.TalonSRX;
 import com.ctre.phoenix.motorcontrol.can.VictorSPX;
-import com.revrobotics.CANSparkMax;
-import com.revrobotics.CANSparkMaxLowLevel.MotorType;
 import com.revrobotics.RelativeEncoder;
-import com.revrobotics.CANSparkMax.IdleMode;
 
 import edu.wpi.first.cameraserver.CameraServer;
 import edu.wpi.first.wpilibj.Compressor;
@@ -22,8 +19,6 @@ import edu.wpi.first.wpilibj.PneumaticsModuleType;
 import edu.wpi.first.wpilibj.Preferences;
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.XboxController; 
-import edu.wpi.first.wpilibj.drive.DifferentialDrive;
-import edu.wpi.first.wpilibj.motorcontrol.MotorControllerGroup;
 
 /**
  * This is a demo program showing the use of the DifferentialDrive class, specifically it contains
@@ -38,14 +33,7 @@ public class Robot extends TimedRobot {
   // private DoubleSolenoid m_rightArmSolenoid;\
   private PneumaticHub m_pneumaticHub;
 
-  private final CANSparkMax m_leftMotor1 = new CANSparkMax(10, MotorType.kBrushless);
-  private final CANSparkMax m_leftMotor2 = new CANSparkMax(11, MotorType.kBrushless);
-  private final CANSparkMax m_rightMotor1 = new CANSparkMax(12, MotorType.kBrushless);
-  private final CANSparkMax m_rightMotor2 = new CANSparkMax(13, MotorType.kBrushless);
-
-  private final MotorControllerGroup m_leftMotor = new MotorControllerGroup(m_leftMotor1, m_leftMotor2);
-  private final MotorControllerGroup m_rightMotor = new MotorControllerGroup(m_rightMotor1, m_rightMotor2);
-  private DifferentialDrive m_tankDrive;
+  IDrivetrainWrapper m_driveTrainWrapper;
 
   private Joystick m_joystick;
   private XboxController m_controller;
@@ -59,14 +47,12 @@ public class Robot extends TimedRobot {
 
   @Override
   public void robotInit() {
-    m_leftMotor1.setIdleMode(IdleMode.kBrake);
-    m_leftMotor2.setIdleMode(IdleMode.kBrake);
-    m_rightMotor1.setIdleMode(IdleMode.kBrake);
-    m_leftMotor2.setIdleMode(IdleMode.kBrake);
+    m_driveTrainWrapper = new DrivetrainWrapper();
+    m_driveTrainWrapper.setMaxOutput(0.2);
+  
     m_joystick = new Joystick(1);
 
     m_controller = new XboxController(0);
-    m_rightMotor.setInverted(true);
 
     m_pneumaticHub = new PneumaticHub();
 
@@ -74,19 +60,19 @@ public class Robot extends TimedRobot {
     m_leftArmSolenoid = m_pneumaticHub.makeDoubleSolenoid(0, 1);
     // m_rightArmSolenoid = m_pneumaticHub.makeDoubleSolenoid(2, 3);
 
-    m_tankDrive = new DifferentialDrive(m_leftMotor, m_rightMotor);
-    m_tankDrive.setMaxOutput(0.2);
-
-    m_rightMotorEncoder = m_leftMotor1.getEncoder();
-    m_leftMotorEncoder = m_rightMotor1.getEncoder();
+    // $TODO - Ido, move the encoder code
+    //m_rightMotorEncoder = m_leftMotor1.getEncoder();
+    //m_leftMotorEncoder = m_rightMotor1.getEncoder();
 
     CameraServer.startAutomaticCapture();
   }
 
   @Override
   public void teleopInit() {
-    m_rightMotorEncoder.setPosition(0);
-    m_leftMotorEncoder.setPosition(0);
+    // $TODO - Ido, move the encoder code
+    //m_rightMotorEncoder.setPosition(0);
+    //m_leftMotorEncoder.setPosition(0);
+
     // Settings are reloaded each time robot switches back to teleop mode
     initRobotPreferences();
   }
@@ -106,7 +92,7 @@ public class Robot extends TimedRobot {
 
   @Override
   public void teleopPeriodic() {
-    m_tankDrive.arcadeDrive(-m_joystick.getY(), -m_joystick.getX(), true);
+    m_driveTrainWrapper.arcadeDrive(-m_joystick.getY(), -m_joystick.getX(), true);
 
     // Right Trigger turns motor on forward and Left Trigger for reverse
     if (m_controller.getRightTriggerAxis() > 0) {
@@ -151,7 +137,9 @@ public class Robot extends TimedRobot {
   @Override
   public void disabledInit() {
     System.out.println("ROBOT DISABLED");
-    System.out.println("LEFT MOTOR POSITION AT" + m_leftMotorEncoder.getPosition());
-    System.out.println("RIGHT MOTOR POSITION AT" + m_rightMotorEncoder.getPosition());
+
+    // $TODO - Ido, move the encoder code
+    //System.out.println("LEFT MOTOR POSITION AT" + m_leftMotorEncoder.getPosition());
+    //System.out.println("RIGHT MOTOR POSITION AT" + m_rightMotorEncoder.getPosition());
   }
 }
