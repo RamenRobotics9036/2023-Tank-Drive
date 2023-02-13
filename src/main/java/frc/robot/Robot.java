@@ -47,7 +47,7 @@ public class Robot extends TimedRobot {
 
   @Override
   public void robotInit() {
-    m_driveTrainWrapper = new DrivetrainWrapperSimulation();
+    m_driveTrainWrapper = DrivetrainWrapper.CreateDrivetrainWrapper(this.isSimulation());
     m_driveTrainWrapper.setMaxOutput(0.2);
     m_driveTrainWrapper.setDeadband(0.1);
   

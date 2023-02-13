@@ -38,6 +38,17 @@ public class DrivetrainWrapper implements IDrivetrainWrapper {
     m_tankDrive = new DifferentialDrive(m_leftMotor, m_rightMotor);
   }
 
+  // Factory
+  public static IDrivetrainWrapper CreateDrivetrainWrapper(boolean isSimulation) {
+    IDrivetrainWrapper result = isSimulation ?
+      new DrivetrainWrapperSimulation() :
+      new DrivetrainWrapper();
+
+    System.out.println("Creating: " + result.toString());
+
+    return result;
+  }
+
   public void setMaxOutput(double maxOutput) {
     m_tankDrive.setMaxOutput(maxOutput);
   }
