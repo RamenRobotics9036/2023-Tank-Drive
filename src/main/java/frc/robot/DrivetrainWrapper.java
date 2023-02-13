@@ -68,5 +68,16 @@ public class DrivetrainWrapper implements IDrivetrainWrapper {
   public void arcadeDrive(double xSpeed, double zRotation, boolean squareInputs) {
     m_tankDrive.arcadeDrive(xSpeed, zRotation, squareInputs);
   }
+
+  public double getLeftRelativeDistance() {
+    return 0;
+  }
+
+  public double getRightRelativeDistance() {
+    return 0;
+  }
+
+  public void resetRelativeEncoders() {
+  }
 }
 

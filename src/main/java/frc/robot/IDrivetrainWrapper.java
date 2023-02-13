@@ -9,5 +9,9 @@ public interface IDrivetrainWrapper {
   public void simulationPeriodic();
 
   public void arcadeDrive(double xSpeed, double zRotation, boolean squareInputs);
+
+  public double getLeftRelativeDistance();
+  public double getRightRelativeDistance();
+  public void resetRelativeEncoders();
 }
 

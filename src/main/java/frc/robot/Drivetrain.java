@@ -53,6 +53,8 @@ public class Drivetrain {
 
   private final Encoder m_leftEncoder = new Encoder(0, 1);
   private final Encoder m_rightEncoder = new Encoder(2, 3);
+  private double m_leftEncoderInitialOffset = 0;
+  private double m_rightEncoderInitialOffset = 0;
 
   private final PIDController m_leftPIDController = new PIDController(8.5, 0, 0);
   private final PIDController m_rightPIDController = new PIDController(8.5, 0, 0);
@@ -98,6 +100,8 @@ public class Drivetrain {
 
     m_leftEncoder.reset();
     m_rightEncoder.reset();
+    m_leftEncoderInitialOffset = 0;
+    m_rightEncoderInitialOffset = 0;
 
     m_rightGroup.setInverted(true);
     SmartDashboard.putData("Field", m_fieldSim);
@@ -160,9 +164,25 @@ public class Drivetrain {
   public void resetOdometry(Pose2d pose) {
     m_leftEncoder.reset();
     m_rightEncoder.reset();
+    m_leftEncoderInitialOffset = 0;
+    m_rightEncoderInitialOffset = 0;
+
     m_drivetrainSimulator.setPose(pose);
     m_odometry.resetPosition(
         m_gyro.getRotation2d(), m_leftEncoder.getDistance(), m_rightEncoder.getDistance(), pose);
+  }
+
+  public double getLeftRelativeDistance() {
+    return m_leftEncoder.getDistance() - m_leftEncoderInitialOffset;
+  }
+
+  public double getRightRelativeDistance() {
+      return m_rightEncoder.getDistance() - m_rightEncoderInitialOffset;
+  }
+
+  public void resetRelativeEncoders() {
+    m_leftEncoderInitialOffset = m_leftEncoder.getDistance();
+    m_rightEncoderInitialOffset = m_rightEncoder.getDistance();
   }
 
   /** Check the current robot pose. */
