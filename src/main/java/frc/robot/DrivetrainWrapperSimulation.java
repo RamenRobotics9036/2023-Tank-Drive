@@ -13,6 +13,10 @@ public class DrivetrainWrapperSimulation implements IDrivetrainWrapper {
     m_driveTrain.setMaxOutput(maxOutput);
   }
 
+  public void setDeadband(double deadband) {
+    m_driveTrain.setDeadband(deadband);
+  }
+  
   public void robotPeriodic() {
     m_driveTrain.periodic();
   }

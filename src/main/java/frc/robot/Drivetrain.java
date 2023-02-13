@@ -130,6 +130,10 @@ public class Drivetrain {
   public void setMaxOutput(double maxOutput) {
     m_maxOutput = MathUtil.clamp(maxOutput, 0, 1.0);
   }
+  
+  public void setDeadband(double deadband) {
+    m_deadband = deadband;
+  }
 
   /** Simulation ArcadeDrive. */
   public void arcadeDrive(double xSpeed, double zRotation, boolean squareInputs) {

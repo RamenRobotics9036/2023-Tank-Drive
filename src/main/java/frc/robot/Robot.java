@@ -49,6 +49,7 @@ public class Robot extends TimedRobot {
   public void robotInit() {
     m_driveTrainWrapper = new DrivetrainWrapperSimulation();
     m_driveTrainWrapper.setMaxOutput(0.2);
+    m_driveTrainWrapper.setDeadband(0.1);
   
     m_joystick = new Joystick(1);
 

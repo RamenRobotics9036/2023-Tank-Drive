@@ -42,6 +42,10 @@ public class DrivetrainWrapper implements IDrivetrainWrapper {
     m_tankDrive.setMaxOutput(maxOutput);
   }
 
+  public void setDeadband(double deadband) {
+    m_tankDrive.setDeadband(deadband);
+  }
+
   public void robotPeriodic() {
     // No op
   }
