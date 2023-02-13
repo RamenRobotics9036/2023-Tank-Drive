@@ -29,14 +29,15 @@ public class DrivetrainWrapperSimulation implements IDrivetrainWrapper {
   }
 
   public double getLeftRelativeDistance() {
-    return 0;
+    return m_driveTrain.getLeftRelativeDistance();
   }
 
   public double getRightRelativeDistance() {
-    return 0;
+    return m_driveTrain.getRightRelativeDistance();
   }
 
   public void resetRelativeEncoders() {
+    m_driveTrain.resetRelativeEncoders();
   }
 }
 

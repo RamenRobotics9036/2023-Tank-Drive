@@ -5,8 +5,11 @@ import com.revrobotics.CANSparkMaxLowLevel.MotorType;
 import com.revrobotics.CANSparkMax.IdleMode;
 import edu.wpi.first.wpilibj.drive.DifferentialDrive;
 import edu.wpi.first.wpilibj.motorcontrol.MotorControllerGroup;
+import com.revrobotics.RelativeEncoder;
 
 public class DrivetrainWrapper implements IDrivetrainWrapper {
+  // Wheel diameter is in meters (6 inches)
+  private static final double kWheelDiameter = 0.1524;
 
   private final CANSparkMax m_leftMotor1;
   private final CANSparkMax m_leftMotor2;
@@ -15,6 +18,9 @@ public class DrivetrainWrapper implements IDrivetrainWrapper {
 
   private final MotorControllerGroup m_leftMotor;
   private final MotorControllerGroup m_rightMotor;
+
+  private final RelativeEncoder m_leftEncoder;
+  private final RelativeEncoder m_rightEncoder;
 
   private DifferentialDrive m_tankDrive;
 
@@ -36,6 +42,13 @@ public class DrivetrainWrapper implements IDrivetrainWrapper {
     m_rightMotor.setInverted(true);
 
     m_tankDrive = new DifferentialDrive(m_leftMotor, m_rightMotor);
+
+    m_leftEncoder = m_leftMotor1.getEncoder();
+    m_rightEncoder = m_rightMotor1.getEncoder();
+
+    m_leftEncoder.setPositionConversionFactor(Math.PI * kWheelDiameter);
+    m_rightEncoder.setPositionConversionFactor(Math.PI * kWheelDiameter);
+    resetRelativeEncoders();
   }
 
   // Factory
@@ -70,14 +83,16 @@ public class DrivetrainWrapper implements IDrivetrainWrapper {
   }
 
   public double getLeftRelativeDistance() {
-    return 0;
+    return m_leftEncoder.getPosition();
   }
 
   public double getRightRelativeDistance() {
-    return 0;
+    return m_rightEncoder.getPosition();
   }
 
   public void resetRelativeEncoders() {
+    m_leftEncoder.setPosition(0);
+    m_rightEncoder.setPosition(0);
   }
 }
 

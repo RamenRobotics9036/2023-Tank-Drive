@@ -38,10 +38,6 @@ public class Robot extends TimedRobot {
   private Joystick m_joystick;
   private XboxController m_controller;
 
-  // $TODO Get rid of this
-  //private RelativeEncoder m_leftMotorEncoder;
-  //private RelativeEncoder m_rightMotorEncoder;
-
   public static final String m_exampleKey = "m_exampleKey";
   private static final double m_exampleDefaultValue = 0.5;
   private static double m_exampleValue = m_exampleDefaultValue;
@@ -62,18 +58,12 @@ public class Robot extends TimedRobot {
     m_leftArmSolenoid = m_pneumaticHub.makeDoubleSolenoid(0, 1);
     // m_rightArmSolenoid = m_pneumaticHub.makeDoubleSolenoid(2, 3);
 
-    // $TODO - Ido, move the encoder code
-    //m_rightMotorEncoder = m_leftMotor1.getEncoder();
-    //m_leftMotorEncoder = m_rightMotor1.getEncoder();
-
     CameraServer.startAutomaticCapture();
   }
 
   @Override
   public void teleopInit() {
-    // $TODO - Ido, move the encoder code
-    //m_rightMotorEncoder.setPosition(0);
-    //m_leftMotorEncoder.setPosition(0);
+    m_driveTrainWrapper.resetRelativeEncoders();
 
     // Settings are reloaded each time robot switches back to teleop mode
     initRobotPreferences();
@@ -149,9 +139,5 @@ public class Robot extends TimedRobot {
   @Override
   public void disabledInit() {
     System.out.println("ROBOT DISABLED");
-
-    // $TODO - Ido, move the encoder code
-    //System.out.println("LEFT MOTOR POSITION AT" + m_leftMotorEncoder.getPosition());
-    //System.out.println("RIGHT MOTOR POSITION AT" + m_rightMotorEncoder.getPosition());
   }
 }
