@@ -47,7 +47,7 @@ public class Robot extends TimedRobot {
 
   @Override
   public void robotInit() {
-    m_driveTrainWrapper = new DrivetrainWrapper();
+    m_driveTrainWrapper = new DrivetrainWrapperSimulation();
     m_driveTrainWrapper.setMaxOutput(0.2);
   
     m_joystick = new Joystick(1);
@@ -88,6 +88,16 @@ public class Robot extends TimedRobot {
     {
       m_exampleValue = m_exampleDefaultValue;
     }
+  }
+
+  @Override
+  public void robotPeriodic() {
+      m_driveTrainWrapper.robotPeriodic();
+  }
+
+  @Override
+  public void simulationPeriodic() {
+      m_driveTrainWrapper.simulationPeriodic();
   }
 
   @Override
