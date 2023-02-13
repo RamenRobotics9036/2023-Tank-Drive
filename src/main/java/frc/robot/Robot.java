@@ -69,6 +69,12 @@ public class Robot extends TimedRobot {
     initRobotPreferences();
   }
 
+  @Override
+  public void autonomousInit() {
+    System.out.println("Starting autonomous...");
+    m_driveTrainWrapper.resetRelativeEncoders();
+  }
+
   private void initRobotPreferences() {
     // Init robot preferences if they don't already exist in flash memory
     if (!Preferences.containsKey(m_exampleKey)) {
@@ -134,6 +140,22 @@ public class Robot extends TimedRobot {
     }
 
     // TODO: Flip joysticks and triggers for drive team
+  }
+
+  @Override
+  public void autonomousPeriodic() {
+    double xSpeed = 0;
+    double zRotation = 0;
+  
+    // Drive two meters and stop
+    double distanceTravelled = m_driveTrainWrapper.getLeftRelativeDistance();
+    if (distanceTravelled < 2) {
+      xSpeed = 0.7;
+
+      System.out.println("Distance travelled: " + distanceTravelled);
+    }
+
+    m_driveTrainWrapper.arcadeDrive(xSpeed, zRotation, true);
   }
 
   @Override
