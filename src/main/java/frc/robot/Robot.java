@@ -38,8 +38,9 @@ public class Robot extends TimedRobot {
   private Joystick m_joystick;
   private XboxController m_controller;
 
-  private RelativeEncoder m_leftMotorEncoder;
-  private RelativeEncoder m_rightMotorEncoder;
+  // $TODO Get rid of this
+  //private RelativeEncoder m_leftMotorEncoder;
+  //private RelativeEncoder m_rightMotorEncoder;
 
   public static final String m_exampleKey = "m_exampleKey";
   private static final double m_exampleDefaultValue = 0.5;
