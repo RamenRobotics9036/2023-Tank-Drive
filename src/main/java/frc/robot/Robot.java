@@ -131,10 +131,10 @@ public class Robot extends TimedRobot {
         // m_rightArmSolenoid.set(DoubleSolenoid.Value.kOff);
     }
 
-    if (m_controller.getLeftY() > 0.1 || m_controller.getLeftY() < 0.1) {
+    if (m_controller.getLeftY() > 0.1 || m_controller.getLeftY() < -0.1) {
       m_armExtensionMotor.set(VictorSPXControlMode.PercentOutput, -m_controller.getLeftY());
       System.out.println("LEFT JOYSTICK PRESSED | OUTPUT SET TO " + m_armExtensionMotor.getMotorOutputPercent());
-    } else if (m_controller.getRightY() > 0.1 || m_controller.getRightY() < 0.1) {
+    } else if (m_controller.getRightY() > 0.1 || m_controller.getRightY() < -0.1) {
         m_armExtensionMotor.set(VictorSPXControlMode.PercentOutput, -m_controller.getRightY());
         System.out.println("RIGHT JOYSTICK PRESSED | OUTPUT SET TO " + m_armExtensionMotor.getMotorOutputPercent());
     } else {
