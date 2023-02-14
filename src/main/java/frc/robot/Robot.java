@@ -41,7 +41,7 @@ public class Robot extends TimedRobot {
   // // private DoubleSolenoid m_rightArmSolenoid;\
   // private PneumaticHub m_pneumaticHub;
 
-  IDrivetrainWrapper m_driveTrainWrapper;
+  private IDrivetrainWrapper m_driveTrainWrapper;
 
   private Joystick m_joystick;
   private XboxController m_controller;
