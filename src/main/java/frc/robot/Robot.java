@@ -17,7 +17,6 @@ import Auto.RotateWheelRotations;
 import Auto.TurnInPlace;
 
 import com.revrobotics.RelativeEncoder;
-import com.revrobotics.CANSparkMax.IdleMode;
 
 import edu.wpi.first.cameraserver.CameraServer;
 import edu.wpi.first.wpilibj.Compressor;
@@ -28,8 +27,6 @@ import edu.wpi.first.wpilibj.PneumaticsModuleType;
 import edu.wpi.first.wpilibj.Preferences;
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.XboxController; 
-import edu.wpi.first.wpilibj.drive.DifferentialDrive;
-import edu.wpi.first.wpilibj.motorcontrol.MotorControllerGroup;
 
 /**
  * This is a demo program showing the use of the DifferentialDrive class, specifically it contains
@@ -44,20 +41,10 @@ public class Robot extends TimedRobot {
   // // private DoubleSolenoid m_rightArmSolenoid;\
   // private PneumaticHub m_pneumaticHub;
 
-  private final CANSparkMax m_leftMotor1 = new CANSparkMax(10, MotorType.kBrushless);
-  private final CANSparkMax m_leftMotor2 = new CANSparkMax(11, MotorType.kBrushless);
-  private final CANSparkMax m_rightMotor1 = new CANSparkMax(12, MotorType.kBrushless);
-  private final CANSparkMax m_rightMotor2 = new CANSparkMax(13, MotorType.kBrushless);
-
-  private final MotorControllerGroup m_leftMotor = new MotorControllerGroup(m_leftMotor1, m_leftMotor2);
-  private final MotorControllerGroup m_rightMotor = new MotorControllerGroup(m_rightMotor1, m_rightMotor2);
-  private DifferentialDrive m_tankDrive;
+  IDrivetrainWrapper m_driveTrainWrapper;
 
   private Joystick m_joystick;
   private XboxController m_controller;
-
-  private RelativeEncoder m_leftMotorEncoder;
-  private RelativeEncoder m_rightMotorEncoder;
 
   public static final String m_exampleKey = "m_exampleKey";
   private static final double m_exampleDefaultValue = 0.5;
@@ -71,14 +58,13 @@ public class Robot extends TimedRobot {
 
   @Override
   public void robotInit() {
-    m_leftMotor1.setIdleMode(IdleMode.kBrake);
-    m_leftMotor2.setIdleMode(IdleMode.kBrake);
-    m_rightMotor1.setIdleMode(IdleMode.kBrake);
-    m_rightMotor2.setIdleMode(IdleMode.kBrake);
+    m_driveTrainWrapper = DrivetrainWrapper.CreateDrivetrainWrapper(this.isSimulation());
+    m_driveTrainWrapper.setMaxOutput(0.2);
+    m_driveTrainWrapper.setDeadband(0.1);
+  
     m_joystick = new Joystick(1);
 
     m_controller = new XboxController(0);
-    m_rightMotor.setInverted(true);
 
     // m_pneumaticHub = new PneumaticHub();
 
@@ -86,21 +72,21 @@ public class Robot extends TimedRobot {
     // m_leftArmSolenoid = m_pneumaticHub.makeDoubleSolenoid(0, 1);
     // m_rightArmSolenoid = m_pneumaticHub.makeDoubleSolenoid(2, 3);
 
-    m_tankDrive = new DifferentialDrive(m_leftMotor, m_rightMotor);
-    // m_tankDrive.setMaxOutput(0.35);
-
-    m_rightMotorEncoder = m_leftMotor1.getEncoder();
-    m_leftMotorEncoder = m_rightMotor1.getEncoder();
-
     // CameraServer.startAutomaticCapture();
   }
 
   @Override
   public void teleopInit() {
-    m_rightMotorEncoder.setPosition(0);
-    m_leftMotorEncoder.setPosition(0);
+    m_driveTrainWrapper.resetRelativeEncoders();
+
     // Settings are reloaded each time robot switches back to teleop mode
     initRobotPreferences();
+  }
+
+  @Override
+  public void autonomousInit() {
+    System.out.println("Starting autonomous...");
+    m_driveTrainWrapper.resetRelativeEncoders();
   }
 
   private void initRobotPreferences() {
@@ -117,11 +103,18 @@ public class Robot extends TimedRobot {
   }
 
   @Override
+  public void robotPeriodic() {
+      m_driveTrainWrapper.robotPeriodic();
+  }
+
+  @Override
+  public void simulationPeriodic() {
+      m_driveTrainWrapper.simulationPeriodic();
+  }
+
+  @Override
   public void teleopPeriodic() {
-    m_tankDrive.arcadeDrive(-m_joystick.getY(), -m_joystick.getX(), true);
-    // System.out.println("LEFT MOTOR SPEED: " + m_leftMotor1.get());
-    // System.out.println("RIGHT MOTOR SPEED: " + m_rightMotor1.get());
-    // System.out.println("JOYSTICK Y AXIS: " + m_joystick.getY());
+    m_driveTrainWrapper.arcadeDrive(-m_joystick.getY(), -m_joystick.getX(), true);
 
     // // Right Trigger turns motor on forward and Left Trigger for reverse
     // if (m_controller.getRightTriggerAxis() > 0) {
@@ -150,10 +143,10 @@ public class Robot extends TimedRobot {
     //     // m_rightArmSolenoid.set(DoubleSolenoid.Value.kOff);
     // }
 
-    // if (m_controller.getLeftY() > 0.1 || m_controller.getLeftY() < 0.1) {
+    // if (m_controller.getLeftY() > 0.1 || m_controller.getLeftY() < -0.1) {
     //   m_armExtensionMotor.set(VictorSPXControlMode.PercentOutput, -m_controller.getLeftY());
     //   System.out.println("LEFT JOYSTICK PRESSED | OUTPUT SET TO " + m_armExtensionMotor.getMotorOutputPercent());
-    // } else if (m_controller.getRightY() > 0.1 || m_controller.getRightY() < 0.1) {
+    // } else if (m_controller.getRightY() > 0.1 || m_controller.getRightY() < -0.1) {
     //     m_armExtensionMotor.set(VictorSPXControlMode.PercentOutput, -m_controller.getRightY());
     //     System.out.println("RIGHT JOYSTICK PRESSED | OUTPUT SET TO " + m_armExtensionMotor.getMotorOutputPercent());
     // } else {
@@ -164,10 +157,24 @@ public class Robot extends TimedRobot {
   }
 
   @Override
+  public void autonomousPeriodic() {
+    double xSpeed = 0;
+    double zRotation = 0;
+  
+    // Drive two meters and stop
+    double distanceTravelled = m_driveTrainWrapper.getLeftRelativeDistance();
+    if (distanceTravelled < 2) {
+      xSpeed = 0.7;
+
+      System.out.println("Distance travelled: " + distanceTravelled);
+    }
+
+    m_driveTrainWrapper.arcadeDrive(xSpeed, zRotation, true);
+  }
+
+  @Override
   public void disabledInit() {
     System.out.println("ROBOT DISABLED");
-    System.out.println("LEFT MOTOR POSITION AT " + m_leftMotorEncoder.getPosition());
-    System.out.println("RIGHT MOTOR POSITION AT " + m_rightMotorEncoder.getPosition());
   }
 
   @Override
