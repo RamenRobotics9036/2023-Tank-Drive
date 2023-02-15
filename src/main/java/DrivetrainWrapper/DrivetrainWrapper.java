@@ -1,4 +1,4 @@
-package frc.robot;
+package DrivetrainWrapper;
 
 import com.revrobotics.CANSparkMax;
 import com.revrobotics.CANSparkMaxLowLevel.MotorType;

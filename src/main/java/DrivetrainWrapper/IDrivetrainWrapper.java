@@ -1,4 +1,4 @@
-package frc.robot;
+package DrivetrainWrapper;
 
 public interface IDrivetrainWrapper {
   public void setMaxOutput(double maxOutput);
@@ -13,4 +13,3 @@ public interface IDrivetrainWrapper {
   public double getRightRelativeDistance();
   public void resetRelativeEncoders();
 }
-

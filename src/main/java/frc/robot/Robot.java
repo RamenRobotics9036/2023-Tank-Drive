@@ -10,14 +10,7 @@ import com.ctre.phoenix.motorcontrol.can.TalonSRX;
 import com.ctre.phoenix.motorcontrol.can.VictorSPX;
 import com.revrobotics.CANSparkMax;
 import com.revrobotics.CANSparkMaxLowLevel.MotorType;
-
-import Auto.RotateLeftMotor;
-import Auto.RotateRightMotor;
-import Auto.RotateWheelRotations;
-import Auto.TurnInPlace;
-
 import com.revrobotics.RelativeEncoder;
-
 import edu.wpi.first.cameraserver.CameraServer;
 import edu.wpi.first.wpilibj.Compressor;
 import edu.wpi.first.wpilibj.DoubleSolenoid;
@@ -27,6 +20,9 @@ import edu.wpi.first.wpilibj.PneumaticsModuleType;
 import edu.wpi.first.wpilibj.Preferences;
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.XboxController; 
+import DrivetrainWrapper.IDrivetrainWrapper;
+import DrivetrainWrapper.DrivetrainWrapper;
+import Auto.TurnInPlace;
 
 /**
  * This is a demo program showing the use of the DifferentialDrive class, specifically it contains
@@ -50,10 +46,7 @@ public class Robot extends TimedRobot {
   private static final double m_exampleDefaultValue = 0.5;
   private static double m_exampleValue = m_exampleDefaultValue;
 
-  private RotateWheelRotations autoCommandRotate;
-  private RotateRightMotor autoCommandRight;
-  private RotateLeftMotor autoCommandLeft;
-  private TurnInPlace autoCommandTurnInPlace;
+  private TurnInPlace m_autoCommandTurnInPlace;
 
 
   @Override
@@ -81,12 +74,6 @@ public class Robot extends TimedRobot {
 
     // Settings are reloaded each time robot switches back to teleop mode
     initRobotPreferences();
-  }
-
-  @Override
-  public void autonomousInit() {
-    System.out.println("Starting autonomous...");
-    m_driveTrainWrapper.resetRelativeEncoders();
   }
 
   private void initRobotPreferences() {
@@ -157,36 +144,29 @@ public class Robot extends TimedRobot {
   }
 
   @Override
-  public void autonomousPeriodic() {
-    double xSpeed = 0;
-    double zRotation = 0;
-  
-    // Drive two meters and stop
-    double distanceTravelled = m_driveTrainWrapper.getLeftRelativeDistance();
-    if (distanceTravelled < 2) {
-      xSpeed = 0.7;
-
-      System.out.println("Distance travelled: " + distanceTravelled);
-    }
-
-    m_driveTrainWrapper.arcadeDrive(xSpeed, zRotation, true);
-  }
-
-  @Override
   public void disabledInit() {
     System.out.println("ROBOT DISABLED");
   }
 
   @Override
   public void autonomousInit() {
-    autoCommandTurnInPlace = new TurnInPlace(true, m_tankDrive, m_rightMotorEncoder, m_leftMotorEncoder, 5, 0.4);
+
+    System.out.println("Starting autonomous...");
+    m_driveTrainWrapper.resetRelativeEncoders();
+
+    m_autoCommandTurnInPlace = new TurnInPlace(
+      true,
+      m_driveTrainWrapper,
+      1, // targetRotation
+      0.7); // percentOutput
+
     System.out.println("AUTO COMMAND SCHEDULED");
   }
 
   @Override
   public void autonomousPeriodic() {
-    if (!autoCommandTurnInPlace.isFinished()) {
-      autoCommandTurnInPlace.execute();
+    if (!m_autoCommandTurnInPlace.isFinished()) {
+      m_autoCommandTurnInPlace.execute();
     }
   }
 }
