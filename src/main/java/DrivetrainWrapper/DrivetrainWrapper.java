@@ -46,6 +46,7 @@ public class DrivetrainWrapper implements IDrivetrainWrapper {
     m_leftEncoder = m_leftMotor1.getEncoder();
     m_rightEncoder = m_rightMotor1.getEncoder();
 
+    // $TODO David pointed out that gear-ratio isn't accounted for here
     m_leftEncoder.setPositionConversionFactor(Math.PI * kWheelDiameter);
     m_rightEncoder.setPositionConversionFactor(Math.PI * kWheelDiameter);
     resetRelativeEncoders();
