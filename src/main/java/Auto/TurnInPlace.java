@@ -1,53 +1,47 @@
 package Auto;
 
-import com.revrobotics.RelativeEncoder;
-
-import edu.wpi.first.wpilibj.drive.DifferentialDrive;
+import DrivetrainWrapper.IDrivetrainWrapper;
 
 public class TurnInPlace {
-    private double gearBoxRatio = 8.28;
-    // private double wheelDiameter = 6;
-    // private double wheelCircumfrence = wheelDiameter * Math.PI;
-    // private double wheelRotationToInches = wheelCircumfrence / gearBoxRatio;
-    private double percentOutput;
+    private double distancePerTurn = 2.38;
 
-    private DifferentialDrive m_drive;
-    private RelativeEncoder m_leftEncoder;
-    private RelativeEncoder m_rightEncoder;
+    IDrivetrainWrapper m_driveTrainWrapper;
 
     private double m_targetRotation;
+    private double m_percentOutput;
     private boolean turnLeft;
     private boolean isFinished = false;
 
-    public TurnInPlace(boolean turnLeft, DifferentialDrive m_drive, RelativeEncoder m_leftEncoder, RelativeEncoder m_rightEncoder, double m_targetRotation, double percentOutput) {
-        this.m_drive = m_drive;
-        this.m_leftEncoder = m_leftEncoder;
-        this.m_rightEncoder = m_rightEncoder;
-        this.m_targetRotation = m_targetRotation;
-        this.percentOutput = percentOutput;
-        m_leftEncoder.setPosition(0);
-        m_rightEncoder.setPosition(0);
+    public TurnInPlace(boolean turnLeft, IDrivetrainWrapper driveTrainWrapper, double targetRotation, double percentOutput) {
+        this.m_driveTrainWrapper = driveTrainWrapper;
+        this.m_targetRotation = targetRotation;
+        this.m_percentOutput = percentOutput;
         this.turnLeft =  turnLeft;
+
+        // Reset encoders
+        driveTrainWrapper.resetRelativeEncoders();
     }
 
     public void execute() {
         if (turnLeft) {
-            m_drive.tankDrive(percentOutput, -percentOutput);
+            m_driveTrainWrapper.arcadeDrive(0.0, m_percentOutput, true);
         } else {
-            m_drive.tankDrive(-percentOutput, percentOutput);
+            m_driveTrainWrapper.arcadeDrive(0.0, -m_percentOutput, true);
         }
-        // System.out.println("AUTO COMMAND SCHEDULED IN IN TURN IN PLACE CLASS");
-        System.out.println("LEFT ENCODER POSITION AT " + Math.abs(m_leftEncoder.getPosition()));
-        System.out.println("RIGHT ENCODER POSITION AT " + Math.abs(m_rightEncoder.getPosition()));
+
+        System.out.println("Left wheel distance travelled: " + m_driveTrainWrapper.getLeftRelativeDistance());
     }
 
     public boolean isFinished() {
-        if ((Math.abs(m_leftEncoder.getPosition()) >= m_targetRotation * gearBoxRatio) && (Math.abs(m_rightEncoder.getPosition()) >= m_targetRotation * gearBoxRatio)) {
-            isFinished = true;
+        boolean result = false;
+    
+        if (Math.abs(m_driveTrainWrapper.getLeftRelativeDistance()) >= m_targetRotation * distancePerTurn) {
+
+            // Stop motors
+            m_driveTrainWrapper.arcadeDrive(0.0, 0.0, true);
+            result = true;
         }
-        if (!isFinished) {
-            // System.out.println("AUTO COMMAND CHECKED IN TURN IN PLACE | IS FINISHED:" + (isFinished));
-        }
-        return isFinished;
+
+        return result;
     }
 }
