@@ -1,13 +1,14 @@
-package DrivetrainWrapper;
+package DrivetrainSubsystem;
 
 import com.revrobotics.CANSparkMax;
 import com.revrobotics.CANSparkMaxLowLevel.MotorType;
 import com.revrobotics.CANSparkMax.IdleMode;
 import edu.wpi.first.wpilibj.drive.DifferentialDrive;
 import edu.wpi.first.wpilibj.motorcontrol.MotorControllerGroup;
+import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import com.revrobotics.RelativeEncoder;
 
-public class DrivetrainWrapper implements IDrivetrainWrapper {
+public class DrivetrainSubsystem extends SubsystemBase implements IDrivetrainSubsystem {
   // Wheel diameter is in meters (6 inches)
   private static final double kWheelDiameter = 0.1524;
 
@@ -25,7 +26,7 @@ public class DrivetrainWrapper implements IDrivetrainWrapper {
   private DifferentialDrive m_tankDrive;
 
   // Constructor
-  public DrivetrainWrapper() {
+  public DrivetrainSubsystem() {
     m_leftMotor1  = new CANSparkMax(10, MotorType.kBrushless);
     m_leftMotor2  = new CANSparkMax(11, MotorType.kBrushless);
     m_rightMotor1 = new CANSparkMax(12, MotorType.kBrushless);
@@ -53,10 +54,10 @@ public class DrivetrainWrapper implements IDrivetrainWrapper {
   }
 
   // Factory
-  public static IDrivetrainWrapper CreateDrivetrainWrapper(boolean isSimulation) {
-    IDrivetrainWrapper result = isSimulation ?
-      new DrivetrainWrapperSimulation() :
-      new DrivetrainWrapper();
+  public static IDrivetrainSubsystem CreateDrivetrainSubsystem(boolean isSimulation) {
+    IDrivetrainSubsystem result = isSimulation ?
+      new DrivetrainSubsystemSimulation() :
+      new DrivetrainSubsystem();
 
     System.out.println("Creating: " + result.toString());
 

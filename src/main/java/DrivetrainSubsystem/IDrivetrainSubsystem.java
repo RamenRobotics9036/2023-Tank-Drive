@@ -1,6 +1,6 @@
-package DrivetrainWrapper;
+package DrivetrainSubsystem;
 
-public interface IDrivetrainWrapper {
+public interface IDrivetrainSubsystem {
   public void setMaxOutput(double maxOutput);
   public void setDeadband(double deadband);
 

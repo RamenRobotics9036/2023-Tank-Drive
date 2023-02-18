@@ -1,11 +1,13 @@
-package DrivetrainWrapper;
+package DrivetrainSubsystem;
 
-public class DrivetrainWrapperSimulation implements IDrivetrainWrapper {
+import edu.wpi.first.wpilibj2.command.SubsystemBase;
+
+public class DrivetrainSubsystemSimulation extends SubsystemBase implements IDrivetrainSubsystem {
 
   private Drivetrain m_driveTrain;
 
   // Constructor
-  public DrivetrainWrapperSimulation() {
+  public DrivetrainSubsystemSimulation() {
     m_driveTrain = new Drivetrain();
   }
 
