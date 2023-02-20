@@ -1,6 +1,8 @@
-package DrivetrainSubsystem;
+package DrivetrainWrapper;
 
-public interface IDrivetrainSubsystem {
+import RelativeEncoderWrapper.IRelativeEncoderWrapper;
+
+public interface IDrivetrainWrapper {
   public void setMaxOutput(double maxOutput);
   public void setDeadband(double deadband);
 
@@ -9,7 +11,6 @@ public interface IDrivetrainSubsystem {
 
   public void arcadeDrive(double xSpeed, double zRotation, boolean squareInputs);
 
-  public double getLeftRelativeDistance();
-  public double getRightRelativeDistance();
-  public void resetRelativeEncoders();
+  public IRelativeEncoderWrapper getLeftEncoder();
+  public IRelativeEncoderWrapper getRightEncoder();
 }

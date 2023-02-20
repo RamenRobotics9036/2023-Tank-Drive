@@ -20,8 +20,9 @@ import edu.wpi.first.wpilibj.PneumaticsModuleType;
 import edu.wpi.first.wpilibj.Preferences;
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.XboxController; 
-import DrivetrainSubsystem.IDrivetrainSubsystem;
-import DrivetrainSubsystem.DrivetrainSubsystem;
+import DrivetrainWrapper.IDrivetrainWrapper;
+import DrivetrainWrapper.DrivetrainWrapper;
+import RelativeEncoderWrapper.IRelativeEncoderWrapper;
 import Auto.TurnInPlace;
 
 /**
@@ -37,7 +38,9 @@ public class Robot extends TimedRobot {
   // // private DoubleSolenoid m_rightArmSolenoid;\
   // private PneumaticHub m_pneumaticHub;
 
-  private IDrivetrainSubsystem m_driveTrainSubsystem;
+  private IDrivetrainWrapper m_driveTrainWrapper;
+  private IRelativeEncoderWrapper m_leftEncoderWrapper;
+  private IRelativeEncoderWrapper m_rightEncoderWrapper;
 
   private Joystick m_joystick;
   private XboxController m_controller;
@@ -51,12 +54,23 @@ public class Robot extends TimedRobot {
 
   @Override
   public void robotInit() {
-    m_driveTrainSubsystem = DrivetrainSubsystem.CreateDrivetrainSubsystem(this.isSimulation());
-    m_driveTrainSubsystem.setMaxOutput(0.2);
-    m_driveTrainSubsystem.setDeadband(0.1);
-  
-    m_joystick = new Joystick(1);
+    double gearBoxRatio = 8.28;
+    double wheelDiameterMeters = 0.1524; // 6 inches
 
+    m_driveTrainWrapper = DrivetrainWrapper.CreateDrivetrainWrapper(
+      Robot.isSimulation(),
+      gearBoxRatio,
+      wheelDiameterMeters);
+
+    m_driveTrainWrapper.setMaxOutput(0.2);
+    m_driveTrainWrapper.setDeadband(0.1);
+
+    m_leftEncoderWrapper = m_driveTrainWrapper.getLeftEncoder();
+    m_rightEncoderWrapper = m_driveTrainWrapper.getRightEncoder();
+    m_leftEncoderWrapper.setPositionConversionToMeters();
+    m_rightEncoderWrapper.setPositionConversionToMeters();
+    
+    m_joystick = new Joystick(1);
     m_controller = new XboxController(0);
 
     // m_pneumaticHub = new PneumaticHub();
@@ -70,7 +84,8 @@ public class Robot extends TimedRobot {
 
   @Override
   public void teleopInit() {
-    m_driveTrainSubsystem.resetRelativeEncoders();
+    m_leftEncoderWrapper.resetPosition();
+    m_rightEncoderWrapper.resetPosition();
 
     // Settings are reloaded each time robot switches back to teleop mode
     initRobotPreferences();
@@ -91,17 +106,17 @@ public class Robot extends TimedRobot {
 
   @Override
   public void robotPeriodic() {
-      m_driveTrainSubsystem.robotPeriodic();
+      m_driveTrainWrapper.robotPeriodic();
   }
 
   @Override
   public void simulationPeriodic() {
-      m_driveTrainSubsystem.simulationPeriodic();
+      m_driveTrainWrapper.simulationPeriodic();
   }
 
   @Override
   public void teleopPeriodic() {
-    m_driveTrainSubsystem.arcadeDrive(-m_joystick.getY(), -m_joystick.getX(), true);
+    m_driveTrainWrapper.arcadeDrive(-m_joystick.getY(), -m_joystick.getX(), true);
 
     // // Right Trigger turns motor on forward and Left Trigger for reverse
     // if (m_controller.getRightTriggerAxis() > 0) {
@@ -152,11 +167,13 @@ public class Robot extends TimedRobot {
   public void autonomousInit() {
 
     System.out.println("Starting autonomous...");
-    m_driveTrainSubsystem.resetRelativeEncoders();
+
+    m_leftEncoderWrapper.resetPosition();
+    m_rightEncoderWrapper.resetPosition();
 
     m_autoCommandTurnInPlace = new TurnInPlace(
       true,
-      m_driveTrainSubsystem,
+      m_driveTrainWrapper,
       1, // targetRotation
       0.7); // percentOutput
 
