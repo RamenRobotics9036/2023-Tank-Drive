@@ -2,7 +2,7 @@
 // Open Source Software; you can modify and/or share it under the terms of
 // the WPILib BSD license file in the root directory of this project.
 
-package DrivetrainSubsystem;
+package DrivetrainWrapper;
 
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.controller.SimpleMotorFeedforward;
@@ -18,7 +18,6 @@ import edu.wpi.first.math.system.plant.LinearSystemId;
 import edu.wpi.first.wpilibj.AnalogGyro;
 import edu.wpi.first.wpilibj.Encoder;
 import edu.wpi.first.wpilibj.RobotController;
-import edu.wpi.first.wpilibj.drive.DifferentialDrive;
 import edu.wpi.first.wpilibj.motorcontrol.MotorControllerGroup;
 import edu.wpi.first.wpilibj.motorcontrol.PWMSparkMax;
 import edu.wpi.first.wpilibj.simulation.AnalogGyroSim;
@@ -154,6 +153,16 @@ public class Drivetrain {
     drive(xDrivetrainSpeed, zDrivetrainRotation);
   }
 
+  /** Get left Encoder. */
+  public Encoder getLeftEncoder() {
+    return m_leftEncoder;
+  }
+
+  /** Get right Encoder. */
+  public Encoder getRightEncoder() {
+    return m_rightEncoder;
+  }
+
   /** Update robot odometry. */
   public void updateOdometry() {
     m_odometry.update(
@@ -164,25 +173,10 @@ public class Drivetrain {
   public void resetOdometry(Pose2d pose) {
     m_leftEncoder.reset();
     m_rightEncoder.reset();
-    m_leftEncoderInitialOffset = 0;
-    m_rightEncoderInitialOffset = 0;
 
     m_drivetrainSimulator.setPose(pose);
     m_odometry.resetPosition(
         m_gyro.getRotation2d(), m_leftEncoder.getDistance(), m_rightEncoder.getDistance(), pose);
-  }
-
-  public double getLeftRelativeDistance() {
-    return m_leftEncoder.getDistance() - m_leftEncoderInitialOffset;
-  }
-
-  public double getRightRelativeDistance() {
-      return m_rightEncoder.getDistance() - m_rightEncoderInitialOffset;
-  }
-
-  public void resetRelativeEncoders() {
-    m_leftEncoderInitialOffset = m_leftEncoder.getDistance();
-    m_rightEncoderInitialOffset = m_rightEncoder.getDistance();
   }
 
   /** Check the current robot pose. */
